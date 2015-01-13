@@ -320,7 +320,7 @@
             "highcharts-more"
         ], function (jquery, gscharts) {
             //4、设置gscharts渲染报表时的数据及配置
-			var chartRecord = {
+            var chartRecord = {
                 id : 'gscharts', 
                 widgetType : 'highcharts',
                 chartType : 'area', 
@@ -353,7 +353,11 @@
                 chartData : chartRecord.chartData,
                 chartConfig : chartConfig
             };
-            gscharts.renderChart(chartOpts);
+            gscharts.renderChart(chartOpts,
+                {
+                    title : {'text' : 'demo'}
+                }
+            );
         });
     &lt;/script&gt;
 &lt;/body&gt;

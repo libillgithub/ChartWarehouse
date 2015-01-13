@@ -17,6 +17,10 @@ body {
 	margin-bottom: 20px;
 }
 
+.mainBody .page-header {
+    margin: 20px;
+}
+
 .mainzone {
 	height: 100%;
 }

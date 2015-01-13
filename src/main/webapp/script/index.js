@@ -66,5 +66,9 @@ require([
 		chartData : chartRecord.chartData,
 		chartConfig : chartConfig
 	};
-	gscharts.renderChart(chartOpts);
+	gscharts.renderChart(chartOpts,
+        {
+            title : {'text' : 'demo'}
+        }
+    );
 });

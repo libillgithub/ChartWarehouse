@@ -352,16 +352,18 @@ define(['highcharts', 'underscore'], function () {
 		return option;
 	}
 	
-	function renderChart(chartOpts) {
+	function renderChart(chartOpts, customOptions) {
 		var container = chartOpts.container,
 			chartType = chartOpts.chartType || 'line',
 			option = {};
-		
-		// chartOpts.chartData = $.extend(true, {}, gsdata.chartData); //simulated data
+            
 		option = _generateOption(chartOpts);
-		option.title =  {
+        if (_.isObject(customOptions) && !_.isEmpty(customOptions)) {
+            option = _.defaults(customOptions, option);
+        }
+		/* option.title = {
 			text: chartType, //+ ' Chart: ' + container
-		};
+		}; */
 		console.dir(option);
 		
 		$('#' + container).highcharts(option);
