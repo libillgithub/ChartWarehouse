@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<!--[if IE 8]>
+<html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]>
+<html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="zn" class="no-js">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <title>gscharts getting started</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta content="" name="description"/>
+    <meta content="" name="author"/>
+    <meta name="MobileOptimized" content="320">
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="script/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <link href="script/plugins/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN PAGE LEVEL STYLES -->
+	<link rel="stylesheet" type="text/css" href="css/prettify.css" />
+    <link href="css/custom.css" rel="stylesheet" type="text/css"/>
+     <!-- END PAGE LEVEL STYLES -->
+    <link rel="shortcut icon" href="favicon.ico"/>
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body>
+	<div class="container mainBody">
+		<div class="page-header">
+			<h1>gscharts 使用说明</h1>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12" role="main">
+
+<h3 id="template" class="page-header">1、为报表准备一个具备大小（宽高）的Dom</h3>
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="zn" class="no-js"&gt;
+&lt;head&gt;
+    &lt;title&gt;gscharts demo&lt;/title&gt;
+    &lt;meta charset="utf-8"/&gt;
+    &lt;meta http-equiv="X-UA-Compatible" content="IE=edge"&gt;
+    &lt;meta content="width=device-width, initial-scale=1.0" name="viewport"/&gt;
+    &lt;link href="script/plugins/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/&gt;
+    &lt;link href="css/custom.css" rel="stylesheet" type="text/css"/&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container mainBody"&gt;
+        &lt;div class="page-header"&gt;
+            &lt;h1&gt;gscharts demo&lt;/h1&gt;
+        &lt;/div&gt;
+        &lt;div class="row"&gt;
+            &lt;div class="col-md-12" role="main"&gt;
+                &lt;!--1、为报表准备一个具备大小（宽高）的Dom--&gt;
+                &lt;div id="gscharts" class="widget" style="height:450px;"&gt;&lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+				
+<h3 id="template" class="page-header">2、设置gschart文件及其所关联js的具体路径</h3>
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="zn" class="no-js"&gt;
+&lt;head&gt;
+    &lt;title&gt;gscharts demo&lt;/title&gt;
+    &lt;meta charset="utf-8"/&gt;
+    &lt;meta http-equiv="X-UA-Compatible" content="IE=edge"&gt;
+    &lt;meta content="width=device-width, initial-scale=1.0" name="viewport"/&gt;
+    &lt;link href="script/plugins/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/&gt;
+    &lt;link href="css/custom.css" rel="stylesheet" type="text/css"/&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container mainBody"&gt;
+        &lt;div class="page-header"&gt;
+            &lt;h1&gt;gscharts demo&lt;/h1&gt;
+        &lt;/div&gt;
+        &lt;div class="row"&gt;
+            &lt;div class="col-md-12" role="main"&gt;
+                &lt;!--1、为报表准备一个具备大小（宽高）的Dom--&gt;
+                &lt;div id="gscharts" class="widget" style="height:450px;"&gt;&lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;script src="script/plugins/require-2.1.14.js">&lt;/script&gt;
+    &lt;script&gt;
+        //2、设置gschart文件及其所关联js的具体路径
+        require.config({
+            baseUrl: "script/",
+            paths: {
+                "jquery": "plugins/jquery-1.10.2.min",
+                "bootstrap": "plugins/bootstrap-3.3.1/js/bootstrap.min",
+                "underscore": "plugins/underscore-min",
+                "highcharts": "plugins/highcharts-4.0.4/highcharts",
+                "highcharts-more": "plugins/highcharts-4.0.4/highcharts-more",
+                "exporting": "plugins/highcharts-4.0.4/modules/exporting",
+                "gscharts": "common/gscharts"
+            },
+            shim: {
+                "bootstrap": ["jquery"],
+                "highcharts-more": ["highcharts"],
+                "exporting": ["highcharts"]
+            },
+            priority: [
+                "jquery"
+            ]
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+				
+<h3 id="template" class="page-header">3、引进gschart文件及关联的js文件，准备渲染报表</h3>
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="zn" class="no-js"&gt;
+&lt;head&gt;
+    &lt;title&gt;gscharts demo&lt;/title&gt;
+    &lt;meta charset="utf-8"/&gt;
+    &lt;meta http-equiv="X-UA-Compatible" content="IE=edge"&gt;
+    &lt;meta content="width=device-width, initial-scale=1.0" name="viewport"/&gt;
+    &lt;link href="script/plugins/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/&gt;
+    &lt;link href="css/custom.css" rel="stylesheet" type="text/css"/&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container mainBody"&gt;
+        &lt;div class="page-header"&gt;
+            &lt;h1&gt;gscharts demo&lt;/h1&gt;
+        &lt;/div&gt;
+        &lt;div class="row"&gt;
+            &lt;div class="col-md-12" role="main"&gt;
+                &lt;!--1、为报表准备一个具备大小（宽高）的Dom--&gt;
+                &lt;div id="gscharts" class="widget" style="height:450px;"&gt;&lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;script src="script/plugins/require-2.1.14.js">&lt;/script&gt;
+    &lt;script&gt;
+        //2、设置gschart文件及其所关联js的具体路径
+        require.config({
+            baseUrl: "script/",
+            paths: {
+                "jquery": "plugins/jquery-1.10.2.min",
+                "bootstrap": "plugins/bootstrap-3.3.1/js/bootstrap.min",
+                "underscore": "plugins/underscore-min",
+                "highcharts": "plugins/highcharts-4.0.4/highcharts",
+                "highcharts-more": "plugins/highcharts-4.0.4/highcharts-more",
+                "exporting": "plugins/highcharts-4.0.4/modules/exporting",
+                "gscharts": "common/gscharts"
+            },
+            shim: {
+                "bootstrap": ["jquery"],
+                "highcharts-more": ["highcharts"],
+                "exporting": ["highcharts"]
+            },
+            priority: [
+                "jquery"
+            ]
+        });
+        //3、引进gschart文件及关联的js文件，准备渲染报表
+        require([
+            "jquery",
+            "gscharts",
+            "bootstrap",
+            "highcharts",
+            "highcharts-more"
+        ], function (jquery, gscharts) {
+            //Todo
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<h3 id="template" class="page-header">4、设置gscharts渲染报表时的数据及配置</h3>
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="zn" class="no-js"&gt;
+&lt;head&gt;
+    &lt;title&gt;gscharts demo&lt;/title&gt;
+    &lt;meta charset="utf-8"/&gt;
+    &lt;meta http-equiv="X-UA-Compatible" content="IE=edge"&gt;
+    &lt;meta content="width=device-width, initial-scale=1.0" name="viewport"/&gt;
+    &lt;link href="script/plugins/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/&gt;
+    &lt;link href="css/custom.css" rel="stylesheet" type="text/css"/&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container mainBody"&gt;
+        &lt;div class="page-header"&gt;
+            &lt;h1&gt;gscharts demo&lt;/h1&gt;
+        &lt;/div&gt;
+        &lt;div class="row"&gt;
+            &lt;div class="col-md-12" role="main"&gt;
+                &lt;!--1、为报表准备一个具备大小（宽高）的Dom--&gt;
+                &lt;div id="gscharts" class="widget" style="height:450px;"&gt;&lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;script src="script/plugins/require-2.1.14.js">&lt;/script&gt;
+    &lt;script&gt;
+        //2、设置gschart文件及其所关联js的具体路径
+        require.config({
+            baseUrl: "script/",
+            paths: {
+                "jquery": "plugins/jquery-1.10.2.min",
+                "bootstrap": "plugins/bootstrap-3.3.1/js/bootstrap.min",
+                "underscore": "plugins/underscore-min",
+                "highcharts": "plugins/highcharts-4.0.4/highcharts",
+                "highcharts-more": "plugins/highcharts-4.0.4/highcharts-more",
+                "exporting": "plugins/highcharts-4.0.4/modules/exporting",
+                "gscharts": "common/gscharts"
+            },
+            shim: {
+                "bootstrap": ["jquery"],
+                "highcharts-more": ["highcharts"],
+                "exporting": ["highcharts"]
+            },
+            priority: [
+                "jquery"
+            ]
+        });
+        //3、引进gschart文件及关联的js文件，准备渲染报表
+        require([
+            "jquery",
+            "gscharts",
+            "bootstrap",
+            "highcharts",
+            "highcharts-more"
+        ], function (jquery, gscharts) {
+            //4、设置gscharts渲染报表时的数据及配置
+            var chartRecord = {
+                id : 'gscharts', 
+                widgetType : 'highcharts',
+                chartType : 'area', 
+                chartData : {
+                    columns : ['device', 'browser', 'pv', 'uv', 'visits', 'bounceRate'],
+                    rows : [
+                        ['computer', 'firefox', 1900, 2900, 3900, 0.956],
+                        ['computer', 'chrome', 3800, 2800, 3800, 0.856],
+                        ['computer', 'ie', 1700, 2700, 3700, 0.756],
+                        ['computer', 'safari', 1600, 2600, 3600, 0.656],
+                        ['computer', 'opera', 1500, 2500, 3500, 0.556],
+                        ['computer', 'others1', 1400, 2400, 3400, 0.456],
+                        ['computer', 'others1', 1900, 2400, 3400, 0.456],
+                        ['phone', 'firefox', 4900, 5900, 6900, 0.978],
+                        ['phone', 'ie', 4800, 5800, 6800, 0.878],
+                        ['phone', 'chrome', 4700, 5700, 6700, 0.778],
+                        ['phone', 'safari', 4600, 5600, 6600, 0.678],
+                        ['phone', 'opera', 4500, 5500, 6500, 0.578],
+                        ['phone', 'others2', 4400, 5400, 6400, 0.478]
+                    ]
+                }
+            },
+            chartConfig = {'xAxes' : [1], 'yAxes' : [2], 'series' : [0]};
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<h3 id="template" class="page-header">5、调用gscharts.renderChart(chartOpts)方法渲染报表</h3>
+<pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="zn" class="no-js"&gt;
+&lt;head&gt;
+    &lt;title&gt;gscharts demo&lt;/title&gt;
+    &lt;meta charset="utf-8"/&gt;
+    &lt;meta http-equiv="X-UA-Compatible" content="IE=edge"&gt;
+    &lt;meta content="width=device-width, initial-scale=1.0" name="viewport"/&gt;
+    &lt;link href="script/plugins/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/&gt;
+    &lt;link href="css/custom.css" rel="stylesheet" type="text/css"/&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container mainBody"&gt;
+        &lt;div class="page-header"&gt;
+            &lt;h1&gt;gscharts demo&lt;/h1&gt;
+        &lt;/div&gt;
+        &lt;div class="row"&gt;
+            &lt;div class="col-md-12" role="main"&gt;
+                &lt;!--1、为报表准备一个具备大小（宽高）的Dom--&gt;
+                &lt;div id="gscharts" class="widget" style="height:450px;"&gt;&lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;script src="script/plugins/require-2.1.14.js">&lt;/script&gt;
+    &lt;script&gt;
+        //2、设置gschart文件及其所关联js的具体路径
+        require.config({
+            baseUrl: "script/",
+            paths: {
+                "jquery": "plugins/jquery-1.10.2.min",
+                "bootstrap": "plugins/bootstrap-3.3.1/js/bootstrap.min",
+                "underscore": "plugins/underscore-min",
+                "highcharts": "plugins/highcharts-4.0.4/highcharts",
+                "highcharts-more": "plugins/highcharts-4.0.4/highcharts-more",
+                "exporting": "plugins/highcharts-4.0.4/modules/exporting",
+                "gscharts": "common/gscharts"
+            },
+            shim: {
+                "bootstrap": ["jquery"],
+                "highcharts-more": ["highcharts"],
+                "exporting": ["highcharts"]
+            },
+            priority: [
+                "jquery"
+            ]
+        });
+        //3、引进gschart文件及关联的js文件，准备渲染报表
+        require([
+            "jquery",
+            "gscharts",
+            "bootstrap",
+            "highcharts",
+            "highcharts-more"
+        ], function (jquery, gscharts) {
+            //4、设置gscharts渲染报表时的数据及配置
+			var chartRecord = {
+                id : 'gscharts', 
+                widgetType : 'highcharts',
+                chartType : 'area', 
+                chartData : {
+                    columns : ['device', 'browser', 'pv', 'uv', 'visits', 'bounceRate'],
+                    rows : [
+                        ['computer', 'firefox', 1900, 2900, 3900, 0.956],
+                        ['computer', 'chrome', 3800, 2800, 3800, 0.856],
+                        ['computer', 'ie', 1700, 2700, 3700, 0.756],
+                        ['computer', 'safari', 1600, 2600, 3600, 0.656],
+                        ['computer', 'opera', 1500, 2500, 3500, 0.556],
+                        ['computer', 'others1', 1400, 2400, 3400, 0.456],
+                        ['computer', 'others1', 1900, 2400, 3400, 0.456],
+                        ['phone', 'firefox', 4900, 5900, 6900, 0.978],
+                        ['phone', 'ie', 4800, 5800, 6800, 0.878],
+                        ['phone', 'chrome', 4700, 5700, 6700, 0.778],
+                        ['phone', 'safari', 4600, 5600, 6600, 0.678],
+                        ['phone', 'opera', 4500, 5500, 6500, 0.578],
+                        ['phone', 'others2', 4400, 5400, 6400, 0.478]
+                    ]
+                }
+            },
+            chartConfig = {'xAxes' : [1], 'yAxes' : [2], 'series' : [0]};
+
+            //5、调用gscharts.renderChart(chartOpts)方法渲染报表
+            var chartOpts = {
+                container : chartRecord.id, 
+                widgetType : chartRecord.widgetType,
+                chartType : chartRecord.chartType,
+                chartData : chartRecord.chartData,
+                chartConfig : chartConfig
+            };
+            gscharts.renderChart(chartOpts);
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+				
+<h3 id="template" class="page-header">
+    6、在浏览器下查看报表的渲染效果
+    <a href="demo.html" class="btn btn-primary active" role="button" target="_blank">VIEW DEMO</a>
+</h3>
+<div id="gscharts" class="widget" style="height:450px;"></div>
+			
+            </div>
+			<!-- <div class="col-md-3" role="complementary">
+			  <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix">
+				<ul class="nav bs-docs-sidenav">
+					<li class="">
+					  <a href="#template">Basic template</a>
+					</li>
+					<li class="">
+					  <a href="#migration">Migrating from 2.x to 3.0</a>
+					</li>
+					<li class="">
+					  <a href="#third-parties">Third party support</a>
+					</li>
+					<li class="">
+					  <a href="#accessibility">Accessibility</a>
+					</li>
+					<li>
+					   <a class="back-to-top" href="#top"> Back to top </a>
+					</li>
+				</ul>
+			  </nav>
+			</div> -->
+		</div>
+	</div>
+	<script data-main="script/index.js" src="script/plugins/require-2.1.14.js" async="true" defer></script>
+</body>
+<!-- END BODY -->
+</html>

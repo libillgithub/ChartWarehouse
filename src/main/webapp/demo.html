@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zn" class="no-js">
+<head>
+    <title>gscharts demo</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link href="script/plugins/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="css/custom.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+	<div class="container mainBody">
+		<div class="page-header">
+			<h1>gscharts demo</h1>
+		</div>
+		<div class="row">
+			<div class="col-md-12" role="main">
+				<!--1、为报表准备一个具备大小（宽高）的Dom-->
+				<div id="gscharts" class="widget" style="height:450px;"></div>
+			</div>
+		</div>
+	</div>
+	
+	<script src="script/plugins/require-2.1.14.js"></script>
+	<script>
+		//2、设置gschart文件及其所关联js的具体路径
+		require.config({
+			baseUrl: "script/",
+			paths: {
+				"jquery": "plugins/jquery-1.10.2.min",
+				"bootstrap": "plugins/bootstrap-3.3.1/js/bootstrap.min",
+				"underscore": "plugins/underscore-min",
+				"highcharts": "plugins/highcharts-4.0.4/highcharts",
+				"highcharts-more": "plugins/highcharts-4.0.4/highcharts-more",
+				"exporting": "plugins/highcharts-4.0.4/modules/exporting",
+				"gscharts": "common/gscharts"
+			},
+			shim: {
+				"bootstrap": ["jquery"],
+				"highcharts-more": ["highcharts"],
+				"exporting": ["highcharts"]
+			},
+			priority: [
+				"jquery"
+			]
+		});
+		
+		//3、引进gschart文件及关联的js文件，准备渲染报表
+		require([
+			"jquery",
+			"gscharts",
+			"bootstrap",
+			"highcharts",
+			"highcharts-more"
+		], function (jquery, gscharts) {
+			//4、设置gscharts渲染报表时的数据及配置
+			var chartRecord = {
+					id : 'gscharts', 
+					widgetType : 'highcharts',
+					chartType : 'area', 
+					chartData : {
+						columns : ['device', 'browser', 'pv', 'uv', 'visits', 'bounceRate'],
+						rows : [
+							['computer', 'firefox', 1900, 2900, 3900, 0.956],
+							['computer', 'chrome', 3800, 2800, 3800, 0.856],
+							['computer', 'ie', 1700, 2700, 3700, 0.756],
+							['computer', 'safari', 1600, 2600, 3600, 0.656],
+							['computer', 'opera', 1500, 2500, 3500, 0.556],
+							['computer', 'others1', 1400, 2400, 3400, 0.456],
+							['computer', 'others1', 1900, 2400, 3400, 0.456],
+							['phone', 'firefox', 4900, 5900, 6900, 0.978],
+							['phone', 'ie', 4800, 5800, 6800, 0.878],
+							['phone', 'chrome', 4700, 5700, 6700, 0.778],
+							['phone', 'safari', 4600, 5600, 6600, 0.678],
+							['phone', 'opera', 4500, 5500, 6500, 0.578],
+							['phone', 'others2', 4400, 5400, 6400, 0.478]
+						]
+					}
+				},
+				chartConfig = {'xAxes' : [1], 'yAxes' : [2], 'series' : [0]};
+
+			//5、调用gscharts.renderChart(chartOpts)方法渲染报表
+			var chartOpts = {
+				container : chartRecord.id, 
+				widgetType : chartRecord.widgetType,
+				chartType : chartRecord.chartType,
+				chartData : chartRecord.chartData,
+				chartConfig : chartConfig
+			};
+			gscharts.renderChart(chartOpts);
+		});
+	
+	</script>
+</body>
+</html>
