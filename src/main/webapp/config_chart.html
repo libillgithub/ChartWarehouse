@@ -35,7 +35,7 @@
     </nav>
 	<div class="container-fluid">
 		<div class="row">
-            <div id="sidebar" class="col-sm-4 col-md-4 sidebar">
+            <div id="sidebar" class="col-sm-4 col-md-4 sidebar sidebar-hidden">
                 <div class="row toolbar">
                     <div class="col-md-12">
                         <div class="sidebar-title">
@@ -46,15 +46,17 @@
                         <button type="button" class="btn btn-primary">关闭</button>
                     </div>
                 </div>
-                <div class="sidebar-content">
+                <div id="sidebarContent" class="sidebar-content">
                     <div id="handsontable" class=""></div>
                 </div>
             </div>
-			<div id="main" class="col-sm-8 col-sm-offset-4 col-md-8 col-md-offset-4 main">
+			<div id="main" class="col-sm-12 col-md-12 main">
                 <h1 class="page-header">Dashboard</h1>
                 <div class="row placeholders">
                     <!--1、为报表准备一个具备大小（宽高）的Dom-->
-                    <div id="gscharts" class="widget" style="height:450px;"></div>
+                    <div id="gscharts1" class="widget" style="height:250px;"></div>
+                    <div id="gscharts2" class="widget" style="height:250px;"></div>
+                    <div id="gscharts3" class="widget" style="height:250px;"></div>
                 </div>
 			</div>
 		</div>

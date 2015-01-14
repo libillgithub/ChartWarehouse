@@ -31,23 +31,8 @@ require([
     "highcharts-more",
     "handsontable"
 ], function (jquery, gscharts) {
-    //数据编辑开关操作
-    $('#closeSidebar').on('click', function (e) {
-        var $sidebar = $('#sidebar').toggleClass('sidebar-hidden');
-        if ($sidebar.hasClass('sidebar-hidden')) {
-            $('#main').removeClass().addClass('col-sm-12 col-md-12 main');
-        } else {
-            $('#main').removeClass().addClass('col-sm-8 col-sm-offset-4 col-md-8 col-md-offset-4 main');
-        }
-    });
-    $('#editData').on('click', function (e) {
-        $('#sidebar').removeClass('sidebar-hidden');
-        $('#main').removeClass().addClass('col-sm-8 col-sm-offset-4 col-md-8 col-md-offset-4 main');    
-    });
-    
-    //4、设置gscharts渲染报表时的数据及配置
     var chartRecord = {
-        id : 'gscharts', 
+        id : 'gscharts1', 
         widgetType : 'highcharts',
         chartType : 'area', 
         chartData : {
@@ -71,8 +56,6 @@ require([
     },
     chartConfig = {'xAxes' : [1], 'yAxes' : [2], 'series' : [0]};
     
-    
-    //get handsontable data;
     function getTableData(data) {
         data = data || [];
         var length = data.length, i = 0, temp = [], target = [], result = [];
@@ -95,14 +78,14 @@ require([
         return result;
     }
     
-    //渲染数据table
     function renderDataEditor(chartData) {
         chartData = chartData || {columns : [], rows : []};
         var data = [], firstRow = [];
         if (chartData.rows.length > 0) {
             data = data.concat([chartData.columns], chartData.rows);
         }
-        console.dir(data);
+        
+        $('#sidebarContent').empty().append('<div id="handsontable"></div>');
         //TO DO: transform data for null value;(预处理null值为空字符串)
         $("#handsontable").handsontable({
             data: data,
@@ -122,39 +105,65 @@ require([
             var changesData = instance.getData();
             changesData = getTableData(changesData);
             changesData = changesData.concat();
+            console.log('changes data now.');
             console.dir(changesData);
             chartRecord.chartData = {
                 columns : changesData.shift(),
                 rows : changesData
             };
             
-            var chartOpts = {
-                container : chartRecord.id, 
-                widgetType : chartRecord.widgetType,
-                chartType : chartRecord.chartType,
-                chartData : chartRecord.chartData,
-                chartConfig : chartConfig
-            };
-            gscharts.renderChart(chartOpts,
-                {
-                    title : {'text' : 'demo'}
-                }
-            );
+            renderLocalChart();
         });
     }
-    renderDataEditor(chartRecord.chartData);
-
-    //5、调用gscharts.renderChart(chartOpts)方法渲染报表
-    var chartOpts = {
-        container : chartRecord.id, 
-        widgetType : chartRecord.widgetType,
-        chartType : chartRecord.chartType,
-        chartData : chartRecord.chartData,
-        chartConfig : chartConfig
-    };
-    gscharts.renderChart(chartOpts,
-        {
-            title : {'text' : 'demo'}
+    
+    function renderLocalChart() {
+        var chartOpts = {
+            container : chartRecord.id, 
+            widgetType : chartRecord.widgetType,
+            chartType : chartRecord.chartType,
+            chartData : chartRecord.chartData,
+            chartConfig : chartConfig
+        };
+        gscharts.renderChart(chartOpts,
+            {
+                title : {'text' : 'demo1'}
+            }
+        );
+        
+        chartOpts.container = 'gscharts2';
+        chartOpts.chartType = 'line';
+        gscharts.renderChart(chartOpts,
+            {
+                title : {'text' : 'demo1'}
+            }
+        );
+        
+        chartOpts.container = 'gscharts3';
+        chartOpts.chartType = 'pie';
+        gscharts.renderChart(chartOpts,
+            {
+                title : {'text' : 'demo1'}
+            }
+        );
+    }
+    
+    //数据编辑开关操作
+    $('#closeSidebar').on('click', function (e) {
+        var $sidebar = $('#sidebar').toggleClass('sidebar-hidden');
+        if ($sidebar.hasClass('sidebar-hidden')) {
+            $('#main').removeClass().addClass('col-sm-12 col-md-12 main');
+        } else {
+            $('#main').removeClass().addClass('col-sm-8 col-sm-offset-4 col-md-8 col-md-offset-4 main');
         }
-    );
+    });
+    $('#editData').on('click', function (e) {
+        if ($('#sidebar').hasClass('sidebar-hidden')) {
+            $('#sidebar').removeClass('sidebar-hidden');
+            $('#main').removeClass().addClass('col-sm-8 col-sm-offset-4 col-md-8 col-md-offset-4 main');
+            renderLocalChart();
+            renderDataEditor(chartRecord.chartData);
+        }
+    });
+
+    renderLocalChart();
 });
