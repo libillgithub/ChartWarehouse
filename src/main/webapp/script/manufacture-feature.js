@@ -1,28 +1,28 @@
-define(['gscharts', 'handsontable'], function (gscharts) {
-    var chartRecord = {
-        id : 'gscharts1', 
-        widgetType : 'highcharts',
-        chartType : 'area', 
-        chartData : {
-            columns : ['device', 'browser', 'pv', 'uv', 'visits', 'bounceRate'],
-            rows : [
-                ['computer', 'firefox', 1900, 2900, 3900, 0.956],
-                ['computer', 'chrome', 3800, 2800, 3800, 0.856],
-                ['computer', 'ie', 1700, 2700, 3700, 0.756],
-                ['computer', 'safari', 1600, 2600, 3600, 0.656],
-                ['computer', 'opera', 1500, 2500, 3500, 0.556],
-                ['computer', 'others1', 1400, 2400, 3400, 0.456],
-                ['computer', 'others1', 1900, 2400, 3400, 0.456],
-                ['phone', 'firefox', 4900, 5900, 6900, 0.978],
-                ['phone', 'ie', 4800, 5800, 6800, 0.878],
-                ['phone', 'chrome', 4700, 5700, 6700, 0.778],
-                ['phone', 'safari', 4600, 5600, 6600, 0.678],
-                ['phone', 'opera', 4500, 5500, 6500, 0.578],
-                ['phone', 'others2', 4400, 5400, 6400, 0.478]
-            ]
+define(['gscharts', 'gscharts-tool', 'gsdata', 'handsontable'], function (gscharts, gschartsTool, gsdata) {
+    //render the local charts of the dashboard 
+    function renderLocalChart() {
+        var chartData = gsdata.chartData, dashboard = gsdata.dashboard, configs = dashboard.configs || {},
+            charts = dashboard.charts || [], chartsLength = charts.length, 
+            i = 0, chart = {}, tpl = '', chartOpts = {}, optionalParams = {};
+        var $chartContainer = $('#chartContainer').empty(),
+            chartTpl = '<div id="<chartId>" class="chart"></div>'; 
+        
+        for (; i < chartsLength; i++) {
+            chart = charts[i];
+            tpl = chartTpl.replace(/<chartId>/g, chart.id);
+            $chartContainer.append(tpl);
+            
+            chartOpts = {
+                container : chart.id, 
+                widgetType : chart.widgetType,
+                chartType : chart.chartType,
+                chartData : chartData, //chart.chartData, //TODO: It can provide the detailed data set for the detailed chart.
+                chartConfig : configs[chart.id]
+            };
+            optionalParams = {title : {'text' : 'demo ' + i}};
+            gschartsTool.renderExtendedChart(chartOpts, optionalParams);
         }
-    },
-    chartConfig = {'xAxes' : [1], 'yAxes' : [2], 'series' : [0]};
+    }
     
     function getTableData(data) {
         data = data || [];
@@ -84,37 +84,6 @@ define(['gscharts', 'handsontable'], function (gscharts) {
         });
     }
     
-    function renderLocalChart() {
-        var chartOpts = {
-            container : chartRecord.id, 
-            widgetType : chartRecord.widgetType,
-            chartType : chartRecord.chartType,
-            chartData : chartRecord.chartData,
-            chartConfig : chartConfig
-        };
-        gscharts.renderChart(chartOpts,
-            {
-                title : {'text' : 'demo1'}
-            }
-        );
-        
-        chartOpts.container = 'gscharts2';
-        chartOpts.chartType = 'line';
-        gscharts.renderChart(chartOpts,
-            {
-                title : {'text' : 'demo1'}
-            }
-        );
-        
-        chartOpts.container = 'gscharts3';
-        chartOpts.chartType = 'pie';
-        gscharts.renderChart(chartOpts,
-            {
-                title : {'text' : 'demo1'}
-            }
-        );
-    }
-    
     function fabricate () {
         //数据编辑开关操作
         $('#closeSidebar').on('click', function (e) {
@@ -134,7 +103,7 @@ define(['gscharts', 'handsontable'], function (gscharts) {
                     $('#sidebar').removeClass('sidebar-hidden');
                     $('#main').removeClass().addClass('col-sm-8 col-sm-offset-4 col-md-8 col-md-offset-4 main');
                     renderLocalChart();
-                    renderDataEditor(chartRecord.chartData);
+                    // renderDataEditor(chartRecord.chartData);
                 }
             }
         });

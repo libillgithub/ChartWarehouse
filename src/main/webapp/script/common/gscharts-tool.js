@@ -212,8 +212,63 @@ define(['gscharts', 'gsdata', 'underscore'], function (gscharts, gsdata) {
 			_updateChart(chartRecord, chartConfig);
 		});
 	}
+    
+    /*
+     *   Render extended chart , as follow.
+    */
+    function _extendToWidget(chartOpts, optionalParams) {
+        var chartId = chartOpts.container;
+        var chartTypes = _.map(_chartTypes, function (value, index, list) {
+			// var selectedTpl = (value === chartRecord.chartType) ? 'selected="selected"' : ''; 
+            return '<li><a href="javascript:void(0)" class="btn-gsconfig chartType" chartType="' + value + '">' + value + '</a></li>';
+		});
+        var widgetTpl = [
+            // '<div id="<widgetId>" class="gswidget">', 
+                '<div class="gswidget-tool">',
+                    '<button type="button" class="btn btn-default gswidget-tool-btn"><i class="fa fa-cog"></i></button>',
+                    '<button type="button" class="btn btn-default gswidget-tool-btn"><i class="fa fa-edit"></i></button>',
+                    '<button type="button" class="btn btn-default gswidget-tool-btn"><i class="fa fa-close"></i></button>',
+                '</div>',
+                '<div class="gswidget-config">',
+                    '<div class="btn-group"> ',
+                    '  <button type="button" class="btn btn-default btn-gsconfig table-mode"><i class="fa fa-table"></i></button>',
+                    '	<div class="btn-group">                                                                                       ',
+                    '	  <button type="button" class="btn btn-default btn-gsconfig chart-mode"><i class="fa fa-bar-chart-o"></i></button>  ',
+                    '	  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> ',
+                    '		<span class="caret"></span>                                                                               ',
+                    '	  </button>                                                                                                   ',
+                    '	  <ul class="dropdown-menu gscolumns"> ', /*pull-right*/
+                            chartTypes.join(''),
+                    '	  </ul> ',
+                    '	</div> ',
+                    '</div>',
+                    '<div class="btn-group plotOptions"> ',
+                    '  	<button type="button" class="btn btn-default btn-gsconfig options-mode">options</button>',
+                    '</div> ',
+                '</div>',
+                '<div class="gswidget-table">',
+                    '<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-hover"></table>',
+                '</div>',
+                '<div class="gswidget-chart gswidget-subitem-shown">',
+                    '<div id="gswidget_content_<widgetId>" class="gswidget-chart-container"></div>',
+                '</div>'
+            // '</div>'
+        ].join('');
+        widgetTpl = widgetTpl.replace(/<widgetId>/g, chartId);
+        $('#' + chartId).empty().addClass('gswidget').append(widgetTpl);
+    }
+    
+    function _renderExtendedChart(chartOpts, optionalParams) {
+        
+        _extendToWidget(chartOpts, optionalParams);
+        
+        chartOpts.container = 'gswidget_content_' + chartOpts.container;
+        gscharts.renderChart(chartOpts, optionalParams);
+        
+    }
 	
 	return {
-		customizePlot : _customizePlot
+		customizePlot : _customizePlot,
+        renderExtendedChart : _renderExtendedChart
 	};
 });

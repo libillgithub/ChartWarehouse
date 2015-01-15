@@ -162,11 +162,7 @@ body {
     bottom: 0px;
 }
 
-.widget {
-    width: 95%;
-    margin: 10px auto;
+.chart {
+    height: 270px;
+    width: 70%;
 }
-.widget div{
-    margin: 0 auto;
-}
-

@@ -1,5 +1,17 @@
 define(function () {
     return {
+        'dashboard' : {
+            charts : [
+				{id : 'chart_2015_01', widgetType : 'highcharts', chartType : 'line', chartData : {columns : [], rows : []}},
+				{id : 'chart_2015_02', widgetType : 'highcharts', chartType : 'spline', chartData : {columns : [], rows : []}},
+				{id : 'chart_2015_03', widgetType : 'highcharts', chartType : 'bar', chartData : {columns : [], rows : []}}
+			],
+			configs : {
+				'chart_2015_01' : {'xAxes' : [1], 'yAxes' : [2], 'series' : [0]}, 
+				'chart_2015_02' : {'xAxes' : [1], 'yAxes' : [2], 'series' : [0]},
+				'chart_2015_03' : {'xAxes' : [1], 'yAxes' : [2], 'series' : [0]}
+			}
+        },
 		'chartData' : {
 			columns : ['device', 'browser', 'pv', 'uv', 'visits', 'bounceRate'],
 			rows : [
@@ -108,7 +120,7 @@ define(function () {
 			{item : 'Opera',   guangdong : 100, guangxi : 200, hunan : 300, hubei : 400, hebei : 500 },
 			{item : 'Others',  guangdong : 100, guangxi : 200, hunan : 300, hubei : 400, hebei : 500 }
 		],
-		'chartDatas1' : [{
+		'realData' : [{
 			"rowkey" : "4058e1de97be0653e3aaf4599ff697aa",
 			"active_in_last30days" : "false",
 			"active_in_last7days" : "false",
