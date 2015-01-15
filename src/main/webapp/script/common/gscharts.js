@@ -1,4 +1,4 @@
-define(['highcharts', 'underscore'], function () {
+define(['highcharts', 'highcharts-more', 'underscore'], function () {
 	var defaultOption = {
 			title: {
 				text: ''

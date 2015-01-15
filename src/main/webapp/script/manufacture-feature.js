@@ -1,36 +1,4 @@
-//2、设置gschart文件及其所关联js的具体路径
-require.config({
-    baseUrl: "script/",
-    paths: {
-        "jquery": "plugins/jquery-1.10.2.min",
-        "bootstrap": "plugins/bootstrap-3.3.1/js/bootstrap.min",
-        "underscore": "plugins/underscore-min",
-        "highcharts": "plugins/highcharts-4.0.4/highcharts",
-        "highcharts-more": "plugins/highcharts-4.0.4/highcharts-more",
-        "exporting": "plugins/highcharts-4.0.4/modules/exporting",
-        "gscharts": "common/gscharts",
-        "handsontable": "plugins/handsontable/dist/handsontable.full.min",
-    },
-    shim: {
-        "bootstrap": ["jquery"],
-        "highcharts-more": ["highcharts"],
-        "exporting": ["highcharts"],
-        "handsontable": ["jquery"]
-    },
-    priority: [
-        "jquery"
-    ]
-});
-
-//3、引进gschart文件及关联的js文件，准备渲染报表
-require([
-    "jquery",
-    "gscharts",
-    "bootstrap",
-    "highcharts",
-    "highcharts-more",
-    "handsontable"
-], function (jquery, gscharts) {
+define(['gscharts', 'handsontable'], function (gscharts) {
     var chartRecord = {
         id : 'gscharts1', 
         widgetType : 'highcharts',
@@ -147,23 +115,34 @@ require([
         );
     }
     
-    //数据编辑开关操作
-    $('#closeSidebar').on('click', function (e) {
-        var $sidebar = $('#sidebar').toggleClass('sidebar-hidden');
-        if ($sidebar.hasClass('sidebar-hidden')) {
-            $('#main').removeClass().addClass('col-sm-12 col-md-12 main');
-        } else {
-            $('#main').removeClass().addClass('col-sm-8 col-sm-offset-4 col-md-8 col-md-offset-4 main');
-        }
-    });
-    $('#editData').on('click', function (e) {
-        if ($('#sidebar').hasClass('sidebar-hidden')) {
-            $('#sidebar').removeClass('sidebar-hidden');
-            $('#main').removeClass().addClass('col-sm-8 col-sm-offset-4 col-md-8 col-md-offset-4 main');
-            renderLocalChart();
-            renderDataEditor(chartRecord.chartData);
-        }
-    });
+    function fabricate () {
+        //数据编辑开关操作
+        $('#closeSidebar').on('click', function (e) {
+            var $sidebar = $('#sidebar').toggleClass('sidebar-hidden');
+            if ($sidebar.hasClass('sidebar-hidden')) {
+                $('#main').removeClass().addClass('col-sm-12 col-md-12 main');
+            } else {
+                $('#main').removeClass().addClass('col-sm-8 col-sm-offset-4 col-md-8 col-md-offset-4 main');
+            }
+        });
+        $('#navbar').on('click', '.chart-handle', function (e) {
+            var $this = $(this);
+            if ($this.hasClass('chart-handle-add')) {
+                console.log('add chart.');
+            } else if ($this.hasClass('chart-handle-edit')) {
+                if ($('#sidebar').hasClass('sidebar-hidden')) {
+                    $('#sidebar').removeClass('sidebar-hidden');
+                    $('#main').removeClass().addClass('col-sm-8 col-sm-offset-4 col-md-8 col-md-offset-4 main');
+                    renderLocalChart();
+                    renderDataEditor(chartRecord.chartData);
+                }
+            }
+        });
 
-    renderLocalChart();
+        renderLocalChart();
+    }
+    
+    return {
+        fabricate : fabricate
+    }
 });

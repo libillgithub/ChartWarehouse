@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zn" class="no-js">
 <head>
-    <title>Config chart</title>
+    <title>报表演示</title>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -13,19 +13,13 @@
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Config chart</a>
+          <a class="navbar-brand" href="#">报表演示</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Dashboard</a></li>
-            <li><a id="editData" href="javascript:void(0)">数据编辑</a></li>
-            <li><a href="#">帮助</a></li>
+            <li><a class="chart-handle chart-handle-add" href="javascript:void(0)">添加报表</a></li>
+            <li><a class="chart-handle chart-handle-edit" href="javascript:void(0)">数据编辑</a></li>
+            <li><a class="chart-handle chart-handle-save" href="javascript:void(0)">保存</a></li>
           </ul>
           <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="Search...">
@@ -51,7 +45,7 @@
                 </div>
             </div>
 			<div id="main" class="col-sm-12 col-md-12 main">
-                <h1 class="page-header">Dashboard</h1>
+                <!-- <h1 class="page-header">Dashboard</h1> -->
                 <div class="row placeholders">
                     <!--1、为报表准备一个具备大小（宽高）的Dom-->
                     <div id="gscharts1" class="widget" style="height:250px;"></div>
@@ -62,6 +56,6 @@
 		</div>
 	</div>
 	
-	<script data-main="script/config_chart.js" src="script/plugins/require-2.1.14.js" async="true" defer></script>
+	<script data-main="script/manufacture-main.js" src="script/plugins/require-2.1.14.js" async="true" defer></script>
 </body>
 </html>
