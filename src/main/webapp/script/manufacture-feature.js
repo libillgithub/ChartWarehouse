@@ -3,7 +3,7 @@ define(['gscharts', 'gscharts-tool', 'gsdata', 'handsontable'], function (gschar
     function renderLocalChart() {
         var chartData = gsdata.chartData, dashboard = gsdata.dashboard, configs = dashboard.configs || {},
             charts = dashboard.charts || [], chartsLength = charts.length, 
-            i = 0, chart = {}, tpl = '', chartOpts = {}, optionalParams = {};
+            i = 0, chart = {}, tpl = '', chartOpts = {}, optionalParams = {}, extendedOpts = {};
         var $chartContainer = $('#chartContainer').empty(),
             chartTpl = '<div id="<chartId>" class="chart"></div>'; 
         
@@ -17,10 +17,18 @@ define(['gscharts', 'gscharts-tool', 'gsdata', 'handsontable'], function (gschar
                 widgetType : chart.widgetType,
                 chartType : chart.chartType,
                 chartData : chartData, //chart.chartData, //TODO: It can provide the detailed data set for the detailed chart.
-                chartConfig : configs[chart.id]
+                chartConfig : configs[chart.id] || {}
             };
             optionalParams = {title : {'text' : 'demo ' + i}};
-            gschartsTool.renderExtendedChart(chartOpts, optionalParams);
+            extendedOpts = {
+                editHandle : function (chartOpts, optionalParams) {
+                    console.log('invoke editHandle.');
+                },
+                closeHandle : function (chartOpts, optionalParams) {
+                    console.log('invoke closeHandle.');
+                }
+            };
+            gschartsTool.renderExtendedChart(chartOpts, optionalParams, extendedOpts);
         }
     }
     

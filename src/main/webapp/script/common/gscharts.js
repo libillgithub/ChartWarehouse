@@ -359,7 +359,7 @@ define(['highcharts', 'highcharts-more', 'underscore'], function () {
             
 		option = _generateOption(chartOpts);
         if (_.isObject(optionalParams) && !_.isEmpty(optionalParams)) {
-            option = _.defaults(optionalParams, option);
+            option = _.defaults({}, optionalParams, option);
         }
 		console.dir(option);
 		

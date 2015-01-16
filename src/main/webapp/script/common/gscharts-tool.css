@@ -34,7 +34,7 @@
 	position: absolute;
 	bottom: 5px;
 	left: 5px;
-	display: block;
+	display: none;
 }
 
 .gswidget .gswidget-config .btn-group{
@@ -49,6 +49,10 @@
 	padding : 3px 6px;
 	z-index: 100;
     border-radius: 0 !important;
+}
+
+.gswidget .gswidget-config .btn-group > .btn:focus{
+    outline: 0;
 }
 
 .gswidget .gswidget-config .plotOptions{
@@ -84,15 +88,20 @@
 	bottom: 0;
 	left: 10px;
 	right: 10px;
-	border: 1px solid #b4cef8;
 	padding: 10px;
-	overflow-y: scroll;
-	overflow-x: hidden;
+	overflow: hidden;
 }
 
-.gswidget .gswidget-table > table {
-	width : 100%;
-	height: 100%;
+.gswidget .gswidget-table .gswidget-table-container {
+	width: 100%;
+    height: 92%;
+    margin-top: 24px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.gswidget .gswidget-table .gswidget-table-container > table {
+
 }
 
 .gswidget .gswidget-table .table-scrollable {
@@ -110,7 +119,6 @@
     right: 10px;
     padding: 10px;
     overflow: hidden;
-    /* border: 1px solid #b4cef8; */
 }
 
 .gswidget .gswidget-chart.gswidget-subitem-shown , 
@@ -125,13 +133,34 @@
 
 /*customize-plot*/
 .customize-plot {
+   
+}
 
+.customize-plot h1, .customize-plot h2, .customize-plot h3, 
+.customize-plot h4, .customize-plot h5, .customize-plot h6 {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300 !important;
+}
+
+.customize-plot .btn.blue {
+    color: white;
+    text-shadow: none;
+    background-color: #4d90fe;
 }
 
 @media (min-width: 992px) {
 	.customize-plot .modal-body {
-		height:400px;
+		height:420px;
 	}
+    .customize-plot .modal-lg {
+        width: 992px;
+    }
+}
+
+.customize-plot .modal-content {
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    border-radius: 0 !important;
 }
 
 .customize-plot .modal-body .customize-plot-item {
@@ -175,6 +204,18 @@
 
 .customize-plot .modal-body .customize-plot-item .droppable-item button {
 	float: none;
+}
+
+.customize-plot .modal-body .customize-plot-item .droppable-item .close {
+    display: inline-block;
+    margin-top: 0px;
+    margin-right: 0px;
+    width: 9px;
+    height: 9px;
+    background-repeat: no-repeat !important;
+    text-indent: -10000px;
+    outline: none;
+    background-image: url("img/remove-icon-small.png") !important;
 }
 
 .customize-plot .modal-body .customize-plot-item .ui-sortable-placeholder {

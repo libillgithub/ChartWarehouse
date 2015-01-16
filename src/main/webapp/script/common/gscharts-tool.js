@@ -1,46 +1,59 @@
-define(['gscharts', 'gsdata', 'underscore'], function (gscharts, gsdata) {
+define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools', 'DT_bootstrap'], function (gscharts, gsdata) {
 	var _chartTypes = ['line', 'spline', 'bar', 'column', 'area', 'areaspline', 'pie', 'columnrange', 'arearange', 'scatter', 'bubble'];
-	
-	//deal with the null chartConfig
-	function _preprocess(options) {
-		var chartRecord = options.chartRecord || {}, chartConfig = options.chartConfig || {}, yAxes = chartConfig.yAxes || [];
-		
-		//To handle the situation about that the chartConfig is null; 
-		if (_.isEmpty(chartConfig)) {
-			var chartData = chartRecord.chartData || {}, list = chartData.rows || [], temp = [], targetIndex = null;
+	var _datatablesCfg = {
+        'searching' : false,
+        'aLengthMenu': [10, 20, 50],
+        'iDisplayLength': 10,
+        'sPaginationType': 'bootstrap',
+        'oLanguage': {
+            'sProcessing': '正在加载中......',
+            'sLengthMenu': '每页显示 _MENU_ 条记录',
+            'sZeroRecords': '查询不到相关数据！',
+            'sEmptyTable': '表中无数据存在！',
+            'sInfo': '当前显示 _START_ 到 _END_ 条，共 _TOTAL_ 条记录',
+            'sInfoEmpty': '当前显示 0 到 0 条，共 0 条记录',
+            'sInfoFiltered': '（已从 _MAX_ 条总记录中过滤）',
+            'sSearch': '搜索：',
+            'oPaginate': {
+                'sFirst': '首页',
+                'sPrevious': '上一页',
+                'sNext': '下一页',
+                'sLast': '末页'
+            }
+        }
+    };
+    
+	//To handle the situation about that the chartConfig is null; 
+	function _preprocess(chartOpts) {
+		if (!chartOpts.chartConfig || _.isEmpty(chartOpts.chartConfig)) {
+			var chartData = chartOpts.chartData || {}, list = chartData.rows || [], targetIndex = 0;
 			if (list.length > 0) {
-				temp = list[0];
-				for (var i = 0; i < temp.length; i++) {
-					if (Number(temp[i])) {
+				list = list[0];
+				for (var i = 0; i < list.length; i++) {
+					if (Number(list[i]) || Number(list[i]) === 0) {
 						targetIndex = i;
 						break;
 					}
 				}
-				targetIndex = targetIndex || 0;
-				options.chartConfig = {'xAxes' : [], 'yAxes' : [targetIndex], 'series' : []};
+				chartOpts.chartConfig = {'xAxes' : [], 'yAxes' : [targetIndex], 'series' : []};
 			} else {
-				options.chartConfig = {'xAxes' : [], 'yAxes' : [], 'series' : []};
+				chartOpts.chartConfig = {'xAxes' : [], 'yAxes' : [], 'series' : []};
 			}
 		}
 	}
 	
-	function _generateDialog(options) {
-		var chartRecord = options.chartRecord || {}, chartConfig = options.chartConfig || {},
-			$container = $( '#' + options.dialogCon).empty().removeData(),
-			chartData = chartRecord.chartData || {},
-			columnTpls = [], columns = chartData.columns || [], length = columns.length, i = 0,
-			xAxesTpls = [], yAxesTpls = [], seriesTpls = [], chartTypes = [], 
-			temp = null, tempTpl = '';
-		
-		//set the dialog's default state;
-		for (; i < length; i++) {
-			columnTpls.push('<h5 class="customize-plot-field" index="' + i + '">' + columns[i] + '</h5>');
-		}
-		chartTypes = _.map(_chartTypes, function (value, index, listObj) {
-			var selectedTpl = (value === chartRecord.chartType) ? 'selected="selected"' : ''; 
+	function _generateDialog(chartOpts) {
+        var chartData = chartOpts.chartData, chartConfig = chartOpts.chartConfig,
+			columns = chartData.columns || [], i = 0, temp = null, tempTpl = '',
+			columnTpls = [], xAxesTpls = [], yAxesTpls = [], seriesTpls = [], chartTypes = [];
+
+        chartTypes = _.map(_chartTypes, function (value, index, list) {
+			var selectedTpl = (value === chartOpts.chartType) ? 'selected="selected"' : ''; 
 			return '<option ' + selectedTpl + '>' + value + '</option>';
 		});
-		
+		for (; i < columns.length; i++) {
+			columnTpls.push('<h5 class="customize-plot-field" index="' + i + '">' + columns[i] + '</h5>');
+		}
 		for (i = 0; i < chartConfig.xAxes.length; i++) {
 			temp = chartConfig.xAxes[i];
 			tempTpl = '<h5 class="droppable-item"><span class="droppable-item-content" index="' + temp + '" order="'+ i + '">' + columns[temp] + '</span><button type="button" class="close"></button></h5>';
@@ -58,7 +71,7 @@ define(['gscharts', 'gsdata', 'underscore'], function (gscharts, gsdata) {
 		}
 
 		var tpl = [
-			'<div class="modal fade customize-plot" id="gschart-customize-plot" tabindex="-1" role="basic" aria-hidden="true">                          ',
+			'<div class="modal fade customize-plot" id="gscharts-customize-plot" tabindex="-1" role="basic" aria-hidden="true">                          ',
 			'	<div class="modal-dialog modal-lg">                                                                                                     ',
 			'		<div class="modal-content">                                                                                                         ',
 			'			<div class="modal-header">                                                                                                      ',
@@ -73,9 +86,9 @@ define(['gscharts', 'gsdata', 'underscore'], function (gscharts, gsdata) {
 			'								<h4>选择列：</h4><div class="customize-plot-item customize-plot-fields">' + columnTpls.join('') + '</div>   ',
 			'							</div>                                                                                                          ',
 			'							<div class="col-md-6 col-sm-12 customize-plot-draggableZone">                                                                                ',
-			'								<h4>xAxes：</h4><div maxLimit="1" class="customize-plot-item customize-plot-xAxes">' + xAxesTpls.join('') + '</div>     	',
-			'								<h4>yAxes：</h4><div maxLimit="3" class="customize-plot-item customize-plot-yAxes">' + yAxesTpls.join('') + '</div>      ',                                            
-			'								<h4>series：</h4><div maxLimit="1" class="customize-plot-item customize-plot-series">' + seriesTpls.join('') + '</div>   ',                                              
+			'								<h4>xAxes：</h4><div maxLimit="1" class="customize-plot-item customize-plot-xAxes">' + xAxesTpls.join('') + '</div>',
+			'								<h4>yAxes：</h4><div maxLimit="3" class="customize-plot-item customize-plot-yAxes">' + yAxesTpls.join('') + '</div>',                                            
+			'								<h4>series：</h4><div maxLimit="1" class="customize-plot-item customize-plot-series">' + seriesTpls.join('') + '</div>',                                              
 			'							</div>                                                                                                          ',
 			'						</div>                                                                                                              ',
 			'					</div>                                                                                                                  ',
@@ -101,21 +114,30 @@ define(['gscharts', 'gsdata', 'underscore'], function (gscharts, gsdata) {
 			'	</div>                                                                                                                                  ',
 			'</div>                                                                                                                                     '
 		].join('');
-		$container.append(tpl);
+        
+        var $customizeModal = $('#gscharts-customize-modal');
+        if ($customizeModal.length === 0) {
+            var chartId = '#' + chartOpts.container;
+            chartId = chartId.replace('gswidget_content_', '');
+            $(chartId).parent().append('<div id="gscharts-customize-modal"></div>');
+            $customizeModal = $('#gscharts-customize-modal');
+        }
+        $customizeModal.empty().removeData();
+		$customizeModal.append(tpl);
 	}
 
-	function _activeInteractions(options) {
-		var chartRecord = options.chartRecord || {}, chartConfig = options.chartConfig || {};
-		var $customizePlot = $('#gschart-customize-plot');
+	function _activeInteractions(chartOpts, optionalParams, extendedOpts) { //options
+		var chartConfig = chartOpts.chartConfig;
+		var $customizePlot = $('#gscharts-customize-plot');
 		
 		$('#modalSaveBtn', $customizePlot).on('click', function (e) {
-			options.callback && options.callback(options);
+			extendedOpts.callback && extendedOpts.callback(chartOpts, optionalParams);
 		});
 		
 		$('#customize-plot-charttype', $customizePlot).on('change', function (e) {
 			var $this = $(this);
-			chartRecord.chartType = $this.val();
-			_updateChart(chartRecord, chartConfig);
+			chartOpts.chartType = $this.val();
+			gscharts.renderChart(chartOpts, optionalParams);
 		});
 		
 		//The listener which is listening to remove exist draggableZone items
@@ -131,12 +153,12 @@ define(['gscharts', 'gsdata', 'underscore'], function (gscharts, gsdata) {
 			} else { //customize-plot-series
 				chartConfig.series.splice(order);
 			}
-			_updateChart(chartRecord, chartConfig);
+			gscharts.renderChart(chartOpts, optionalParams);
 		});
 		
 		//active draggable and droppable Interactions
 		$('.customize-plot-fields .customize-plot-field', $customizePlot).draggable({
-			appendTo : '#gschart-customize-plot',
+			appendTo : '#gscharts-customize-plot',
 			helper : 'clone'
 			// ,stop: function( event, ui ) {}
 		});
@@ -161,7 +183,7 @@ define(['gscharts', 'gsdata', 'underscore'], function (gscharts, gsdata) {
 					} else { //customize-plot-series
 						chartConfig.series.push(index);
 					}
-					_updateChart(chartRecord, chartConfig);
+					gscharts.renderChart(chartOpts, optionalParams);
 				} else {
 					$previousNode = $this.prev();
 					if ($previousNode.find('.alert-warning').length <= 0) {
@@ -179,61 +201,53 @@ define(['gscharts', 'gsdata', 'underscore'], function (gscharts, gsdata) {
 				}
 			}
 		}).sortable({
-		  items: 'h5:not(.placeholder)',
-		  sort: function() {
-			// gets added unintentionally by droppable interacting with sortable
-			// using connectWithSortable fixes this, but doesn't allow you to customize active/hoverClass options
-			$(this).removeClass( 'ui-state-default' );
-		  }
+            items: 'h5:not(.placeholder)',
+            sort: function() {
+                // gets added unintentionally by droppable interacting with sortable
+                // using connectWithSortable fixes this, but doesn't allow you to customize active/hoverClass options
+                $(this).removeClass( 'ui-state-default' );
+            }
 		});
 	}
 	
-	function _updateChart(chartRecord, chartConfig) {
-		var chartOpts = {
-			container : 'gschart-customizePlotChart', 
-			widgetType : chartRecord.widgetType,
-			chartType : chartRecord.chartType,
-			chartData : chartRecord.chartData,
-			chartConfig : chartConfig
-		};
-		gscharts.renderChart(chartOpts);
-	}
-	
-	function _customizePlot(options) {
-		options.chartRecord.chartData = $.extend(true, {}, gsdata.chartData); //simulated data
-		options = $.extend(true, {}, options);
-		_preprocess(options);
-		_generateDialog(options);
+	function _customizePlot(chartOpts, optionalParams, extendedOpts) {
+		chartOpts = $.extend(true, {}, chartOpts);
+		optionalParams = optionalParams || {};
+        extendedOpts = extendedOpts || {};
+        
+		_preprocess(chartOpts);
+		_generateDialog(chartOpts);
+        
 		//Note: The modal method is asynchronous mode. It should use the event "shown.bs.modal" listener to monitor. 
 		//Because highcharts can't get the size of container before modal have been shown.			
-		$('#gschart-customize-plot').modal('show').off('shown.bs.modal').on('shown.bs.modal', function (e) {
-			var chartRecord = options.chartRecord || {}, chartConfig = options.chartConfig || {};
-			_activeInteractions(options);
-			_updateChart(chartRecord, chartConfig);
+		$('#gscharts-customize-plot').modal('show').off('shown.bs.modal').on('shown.bs.modal', function (e) {
+			_activeInteractions(chartOpts, optionalParams, extendedOpts);
+            chartOpts.container = 'gschart-customizePlotChart';
+            gscharts.renderChart(chartOpts, optionalParams);
 		});
 	}
     
     /*
+     ***************************************************************************
      *   Render extended chart , as follow.
+     ***************************************************************************
     */
-    function _extendToWidget(chartOpts, optionalParams) {
-        var chartId = chartOpts.container;
+    function _extendToWidget(chartId) {
         var chartTypes = _.map(_chartTypes, function (value, index, list) {
-			// var selectedTpl = (value === chartRecord.chartType) ? 'selected="selected"' : ''; 
-            return '<li><a href="javascript:void(0)" class="btn-gsconfig chartType" chartType="' + value + '">' + value + '</a></li>';
+            return '<li><a href="javascript:void(0)" class="gswidget-btn chartType" chartType="' + value + '">' + value + '</a></li>';
 		});
         var widgetTpl = [
             // '<div id="<widgetId>" class="gswidget">', 
                 '<div class="gswidget-tool">',
-                    '<button type="button" class="btn btn-default gswidget-tool-btn"><i class="fa fa-cog"></i></button>',
-                    '<button type="button" class="btn btn-default gswidget-tool-btn"><i class="fa fa-edit"></i></button>',
-                    '<button type="button" class="btn btn-default gswidget-tool-btn"><i class="fa fa-close"></i></button>',
+                    '<button type="button" class="btn btn-default gswidget-btn gswidget-tool-btn config-btn"><i class="fa fa-cog"></i></button>',
+                    '<button type="button" class="btn btn-default gswidget-btn gswidget-tool-btn edit-btn"><i class="fa fa-edit"></i></button>',
+                    '<button type="button" class="btn btn-default gswidget-btn gswidget-tool-btn close-btn"><i class="fa fa-close"></i></button>',
                 '</div>',
                 '<div class="gswidget-config">',
                     '<div class="btn-group"> ',
-                    '  <button type="button" class="btn btn-default btn-gsconfig table-mode"><i class="fa fa-table"></i></button>',
+                    '  <button type="button" class="btn btn-default gswidget-btn table-mode"><i class="fa fa-table"></i></button>',
                     '	<div class="btn-group">                                                                                       ',
-                    '	  <button type="button" class="btn btn-default btn-gsconfig chart-mode"><i class="fa fa-bar-chart-o"></i></button>  ',
+                    '	  <button type="button" class="btn btn-default gswidget-btn chart-mode"><i class="fa fa-bar-chart-o"></i></button>  ',
                     '	  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> ',
                     '		<span class="caret"></span>                                                                               ',
                     '	  </button>                                                                                                   ',
@@ -243,11 +257,13 @@ define(['gscharts', 'gsdata', 'underscore'], function (gscharts, gsdata) {
                     '	</div> ',
                     '</div>',
                     '<div class="btn-group plotOptions"> ',
-                    '  	<button type="button" class="btn btn-default btn-gsconfig options-mode">options</button>',
+                    '  	<button type="button" class="btn btn-default gswidget-btn options-mode">options</button>',
                     '</div> ',
                 '</div>',
                 '<div class="gswidget-table">',
-                    '<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-hover"></table>',
+                    '<div class="gswidget-table-container">',
+                        '<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-hover"></table>',
+                    '</div>',
                 '</div>',
                 '<div class="gswidget-chart gswidget-subitem-shown">',
                     '<div id="gswidget_content_<widgetId>" class="gswidget-chart-container"></div>',
@@ -258,13 +274,80 @@ define(['gscharts', 'gsdata', 'underscore'], function (gscharts, gsdata) {
         $('#' + chartId).empty().addClass('gswidget').append(widgetTpl);
     }
     
-    function _renderExtendedChart(chartOpts, optionalParams) {
+    function _renderDataTable(chartOpts, $gswidget) {
+        var $tableContainer = $('.gswidget-table .gswidget-table-container', $gswidget).empty();
+        $tableContainer.append('<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-hover"></table>');
+        var chartData = chartOpts.chartData,
+            columns = _.map(chartData.columns, function (value, index, list) {return {'title' : value}}),
+            dtConfig = $.extend({}, _datatablesCfg, {
+                data : chartData.rows,
+                columns : columns
+            });
+        $('table', $tableContainer).dataTable(dtConfig);
+        /* 
+        var $tableElement = $('.gswidget-table .gswidget-table-container > table', $gswidget)
+        if ($tableElement.length > 0) {
+            var chartData = chartOpts.chartData,
+                columns = _.map(chartData.columns, function (value, index, list) {return {'title' : value}}),
+                dtConfig = $.extend({}, _datatablesCfg, {
+                    data : chartData.rows,
+                    columns : columns
+                });
+            $tableElement.dataTable(dtConfig); 
+        }
+        */
+    }
+    
+    function _rigisterListener(chartOpts, optionalParams, extendedOpts) {
+        var containerId = chartOpts.container;
+        $('#' + containerId).on('click', '.gswidget-btn', 
+            {'chartOpts' : chartOpts, 'optionalParams' : optionalParams, 'extendedOpts' : extendedOpts}, function (e) {
+            var $this = $(this), $gswidget = $(e.delegateTarget), selChartType = '',
+                chartOpts = e.data.chartOpts, //ToDO: The chartOpts can be got from the chart container data.
+                optionalParams = e.data.optionalParams, extendedOpts = e.data.extendedOpts;
+            if ($this.hasClass('config-btn')) {
+                $('.gswidget-config', $gswidget).toggleClass('config-shown');
+            } else if ($this.hasClass('edit-btn')) {
+                extendedOpts.editHandle && extendedOpts.editHandle(chartOpts, optionalParams);
+            } else if ($this.hasClass('close-btn')) {
+                $gswidget.remove();
+                extendedOpts.closeHandle && extendedOpts.closeHandle(chartOpts, optionalParams);
+            } else if ($this.hasClass('table-mode')) {
+                $('.plotOptions', $gswidget).removeClass('plotOptions-shown');
+                $('.gswidget-chart', $gswidget).removeClass('gswidget-subitem-shown');
+                $('.gswidget-table', $gswidget).addClass('gswidget-subitem-shown');
+                _renderDataTable(chartOpts, $gswidget);
+            } else if ($this.hasClass('chart-mode')) {
+                $('.plotOptions', $gswidget).addClass('plotOptions-shown');
+                $('.gswidget-chart', $gswidget).addClass('gswidget-subitem-shown');
+                $('.gswidget-table', $gswidget).removeClass('gswidget-subitem-shown');
+            } else if ($this.hasClass('options-mode')) {
+                _customizePlot(chartOpts, optionalParams, {
+                    'callback' : function (chartOpts, optionalParams) {
+                        gscharts.renderChart(chartOpts, optionalParams);
+                    }
+                });
+            } else if ($this.hasClass('chartType')) {
+                $('.plotOptions', $gswidget).addClass('plotOptions-shown');
+                $('.gswidget-chart', $gswidget).addClass('gswidget-subitem-shown');
+                $('.gswidget-table', $gswidget).removeClass('gswidget-subitem-shown');
+                
+                chartOpts.chartType = $this.attr('chartType');
+                gscharts.renderChart(chartOpts, optionalParams);
+            }
+        });
+    }
+    
+    function _renderExtendedChart(chartOpts, optionalParams, extendedOpts) {
+        chartOpts = $.extend(true, {}, chartOpts);
+        optionalParams = optionalParams || {};
+        extendedOpts = extendedOpts || {};
         
-        _extendToWidget(chartOpts, optionalParams);
+        _extendToWidget(chartOpts.container);
+        _rigisterListener(chartOpts, optionalParams, extendedOpts);
         
         chartOpts.container = 'gswidget_content_' + chartOpts.container;
         gscharts.renderChart(chartOpts, optionalParams);
-        
     }
 	
 	return {

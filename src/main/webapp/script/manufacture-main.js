@@ -10,6 +10,9 @@ require.config({
         'highcharts-more': 'plugins/highcharts-4.0.4/highcharts-more',
         'exporting': 'plugins/highcharts-4.0.4/modules/exporting',
         'handsontable': 'plugins/handsontable/dist/handsontable.full.min',
+        'datatables': 'plugins/data-tables/jquery.dataTables.min',
+        'dataTables-tableTools': 'plugins/data-tables/dataTables.tableTools.min',
+        'DT_bootstrap': 'plugins/data-tables/DT_bootstrap',
         'gscharts': 'common/gscharts',
         'gscharts-tool': 'common/gscharts-tool',
         'gsdata': 'common/gsdata',
@@ -21,7 +24,10 @@ require.config({
         'bootstrap': ['jquery'],
         'highcharts-more': ['highcharts'],
         'exporting': ['highcharts'],
-        'handsontable': ['jquery']
+        'handsontable': ['jquery'],
+        'datatables': ['jquery'],
+        'dataTables-tableTools': ['datatables'],
+        'DT_bootstrap': ['jquery', 'bootstrap', 'dataTables-tableTools']
     },
     priority: [
         'jquery'
