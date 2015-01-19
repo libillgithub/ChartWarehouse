@@ -117,9 +117,12 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
         
         var $customizeModal = $('#gscharts-customize-modal');
         if ($customizeModal.length === 0) {
-            var chartId = '#' + chartOpts.container;
-            chartId = chartId.replace('gswidget_content_', '');
-            $(chartId).parent().append('<div id="gscharts-customize-modal"></div>');
+            // var chartId = '#' + chartOpts.container;
+            // chartId = chartId.replace('gswidget_content_', '');
+            // $(chartId).parent().append('<div id="gscharts-customize-modal"></div>');
+            // $customizeModal = $('#gscharts-customize-modal');
+            
+            $(document.body).append('<div id="gscharts-customize-modal"></div>');
             $customizeModal = $('#gscharts-customize-modal');
         }
         $customizeModal.empty().removeData();
@@ -302,9 +305,10 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
         var containerId = chartOpts.container;
         $('#' + containerId).on('click', '.gswidget-btn', 
             {'chartOpts' : chartOpts, 'optionalParams' : optionalParams, 'extendedOpts' : extendedOpts}, function (e) {
-            var $this = $(this), $gswidget = $(e.delegateTarget), selChartType = '',
-                chartOpts = e.data.chartOpts, //ToDO: The chartOpts can be got from the chart container data.
-                optionalParams = e.data.optionalParams, extendedOpts = e.data.extendedOpts;
+            var $this = $(this), $gswidget = $(e.delegateTarget), selChartType = '';
+                // Temporary commented out for demonstration.(The commented out is for avoiding closure.)
+                // chartOpts = e.data.chartOpts, //ToDO: The chartOpts can be got from the chart container data.
+                // optionalParams = e.data.optionalParams, extendedOpts = e.data.extendedOpts;
             if ($this.hasClass('config-btn')) {
                 $('.gswidget-config', $gswidget).toggleClass('config-shown');
             } else if ($this.hasClass('edit-btn')) {
@@ -323,8 +327,11 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
                 $('.gswidget-table', $gswidget).removeClass('gswidget-subitem-shown');
             } else if ($this.hasClass('options-mode')) {
                 _customizePlot(chartOpts, optionalParams, {
-                    'callback' : function (chartOpts, optionalParams) {
-                        gscharts.renderChart(chartOpts, optionalParams);
+                    'callback' : function (cbChartOpts, cbOptionalParams) {
+                        cbChartOpts.container = chartOpts.container;
+                        chartOpts = cbChartOpts;
+                        optionalParams = cbOptionalParams;
+                        gscharts.renderChart(cbChartOpts, cbOptionalParams);
                     }
                 });
             } else if ($this.hasClass('chartType')) {

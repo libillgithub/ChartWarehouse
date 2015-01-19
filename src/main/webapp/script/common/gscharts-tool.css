@@ -292,3 +292,16 @@
 .customize-plot .modal-body .customize-plot-draggableZone .alert-warning .close {
 	margin-left: 5px;
 }
+
+/*dialog css*/
+.modal-open {
+    padding-right: 0 !important;
+    overflow-y: auto !important;
+}
+
+#gscharts-customize-modal {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
