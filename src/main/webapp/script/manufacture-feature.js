@@ -21,10 +21,11 @@ define(['gscharts', 'gscharts-tool', 'gsdata', 'handsontable'], function (gschar
             };
             optionalParams = {title : {'text' : 'demo ' + i}};
             extendedOpts = {
-                editHandle : function (chartOpts, optionalParams) {
+                editHandle : function (event, chartOpts, optionalParams) {
                     console.log('invoke editHandle.');
+                    renderHTDataEditor(event, chartOpts, optionalParams);
                 },
-                closeHandle : function (chartOpts, optionalParams) {
+                closeHandle : function (event, chartOpts, optionalParams) {
                     console.log('invoke closeHandle.');
                 }
             };
@@ -32,7 +33,8 @@ define(['gscharts', 'gscharts-tool', 'gsdata', 'handsontable'], function (gschar
         }
     }
     
-    function getTableData(data) {
+    //transform data for null value;(预处理null值为空字符串)
+    function getCleanTableData(data) {
         data = data || [];
         var length = data.length, i = 0, temp = [], target = [], result = [];
         for (; i < length; i++) {
@@ -48,71 +50,73 @@ define(['gscharts', 'gscharts-tool', 'gsdata', 'handsontable'], function (gschar
                     }
                 }
             } else {
-                break;
+                continue;
             }
         }
         return result;
     }
     
-    function renderDataEditor(chartData) {
-        chartData = chartData || {columns : [], rows : []};
-        var data = [], firstRow = [];
+    function renderHTDataEditor(event, chartOpts, optionalParams) {
+        $('#sidebar').removeClass('sidebar-hidden');
+        $('#sidebarContent').empty().append('<div id="handsontable" class="handsontable"></div>');
+        $('#main').removeClass().addClass('col-sm-8 col-sm-offset-4 col-md-8 col-md-offset-4 main');
+        // due to different scale screen, It need to rerender.
+        // renderLocalChart();
+        
+        //Todo: It should get chartdata from detail chart, e.g., $('#chartId').data('gsData');
+        var chartData = chartOpts.chartData, sourceData = [], height = $('#sidebarContent').css('height'),
+            $gswidget = $(event.delegateTarget);
+        chartData = $.extend(true, {}, chartData);
         if (chartData.rows.length > 0) {
-            data = data.concat([chartData.columns], chartData.rows);
+            sourceData = sourceData.concat([chartData.columns], chartData.rows);
         }
         
-        $('#sidebarContent').empty().append('<div id="handsontable"></div>');
-        //TO DO: transform data for null value;(预处理null值为空字符串)
-        $("#handsontable").handsontable({
-            data: data,
-            minRows: 5,
-            minCols: 5,
+        $('#handsontable').handsontable({
+            data: sourceData,
+            minRows : 50,
+            minCols : 12,
+            minSpareRows : 1,
+            minSpareCols : 1,
+            stretchH : "last",
+            copyRowsLimit : 3e3,
+            copyColsLimit : 3e3,
             manualColumnResize: true,
             manualRowResize: true,
             rowHeaders: true,
             colHeaders: true,
-            minSpareRows: 50,
-            minSpareCols: 15,
-            contextMenu: true
+            contextMenu: true,
+            height : parseFloat(height) //must set the height value for it's own scoller bar.
         }); 
+        
         // $('#handsontable').handsontable('loadData', data);
-        var instance = $("#handsontable").handsontable('getInstance');
+        var instance = $('#handsontable').handsontable('getInstance');
         instance.addHook('afterChange', function(changes, source) {
             var changesData = instance.getData();
-            changesData = getTableData(changesData);
+            changesData = getCleanTableData(changesData);
             changesData = changesData.concat();
-            console.log('changes data now.');
-            console.dir(changesData);
-            chartRecord.chartData = {
-                columns : changesData.shift(),
+            chartOpts.chartData = {
+                columns : changesData.shift() || [],
                 rows : changesData
             };
             
-            renderLocalChart();
+            gscharts.renderChart(chartOpts, optionalParams);
         });
     }
     
     function fabricate () {
-        //数据编辑开关操作
         $('#closeSidebar').on('click', function (e) {
-            var $sidebar = $('#sidebar').toggleClass('sidebar-hidden');
-            if ($sidebar.hasClass('sidebar-hidden')) {
-                $('#main').removeClass().addClass('col-sm-12 col-md-12 main');
-            } else {
-                $('#main').removeClass().addClass('col-sm-8 col-sm-offset-4 col-md-8 col-md-offset-4 main');
-            }
+            var $sidebar = $('#sidebar').addClass('sidebar-hidden');
+            $('#main').removeClass().addClass('col-sm-12 col-md-12 main');
+            // due to different scale screen, It need to rerender.
+            // renderLocalChart();
         });
+        
         $('#navbar').on('click', '.chart-handle', function (e) {
             var $this = $(this);
             if ($this.hasClass('chart-handle-add')) {
                 console.log('add chart.');
-            } else if ($this.hasClass('chart-handle-edit')) {
-                if ($('#sidebar').hasClass('sidebar-hidden')) {
-                    $('#sidebar').removeClass('sidebar-hidden');
-                    $('#main').removeClass().addClass('col-sm-8 col-sm-offset-4 col-md-8 col-md-offset-4 main');
-                    renderLocalChart();
-                    // renderDataEditor(chartRecord.chartData);
-                }
+            } else if ($this.hasClass('chart-handle-save')) {
+                console.log('save chart.');
             }
         });
 

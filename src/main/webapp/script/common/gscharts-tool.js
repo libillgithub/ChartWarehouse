@@ -312,10 +312,10 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
             if ($this.hasClass('config-btn')) {
                 $('.gswidget-config', $gswidget).toggleClass('config-shown');
             } else if ($this.hasClass('edit-btn')) {
-                extendedOpts.editHandle && extendedOpts.editHandle(chartOpts, optionalParams);
+                extendedOpts.editHandle && extendedOpts.editHandle.call(this, e, chartOpts, optionalParams);
             } else if ($this.hasClass('close-btn')) {
                 $gswidget.remove();
-                extendedOpts.closeHandle && extendedOpts.closeHandle(chartOpts, optionalParams);
+                extendedOpts.closeHandle && extendedOpts.closeHandle.call(this, e, chartOpts, optionalParams);
             } else if ($this.hasClass('table-mode')) {
                 $('.plotOptions', $gswidget).removeClass('plotOptions-shown');
                 $('.gswidget-chart', $gswidget).removeClass('gswidget-subitem-shown');
