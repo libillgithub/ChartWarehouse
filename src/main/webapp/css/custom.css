@@ -17,6 +17,12 @@ body {
 	margin-bottom: 20px;
 }
 
+@media (min-width: 1440px){
+    .container {
+        width: 1440px;
+    }
+}
+
 .mainBody .page-header {
     margin: 20px;
 }
@@ -37,4 +43,12 @@ body {
 	background-color: #f7f7f9;
 	border: 1px solid #e1e1e8;
 	border-radius: 4px;
+}
+
+.codeContainer {
+    margin: 10px auto;
+    height: 450px;
+}
+.codeContainer > textarea{
+   display: none;
 }
