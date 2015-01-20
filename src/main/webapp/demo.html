@@ -22,9 +22,8 @@
             <div class="col-md-5">
                 <div class="codeContainer" style="">
                     <textarea id="codeContainer" name="code">
-//4、设置gscharts渲染报表时的数据及配置
-var chartRecord = {
-    id : 'gscharts', 
+var chartOpts = {
+    container : 'gscharts', 
     widgetType : 'highcharts',
     chartType : 'area', 
     chartData : {
@@ -44,17 +43,8 @@ var chartRecord = {
             ['phone', 'opera', 4500, 5500, 6500, 0.578],
             ['phone', 'others2', 4400, 5400, 6400, 0.478]
         ]
-    }
-},
-chartConfig = {'xAxes' : [1], 'yAxes' : [2], 'series' : [0]};
-
-//5、调用gscharts.renderChart(chartOpts)方法渲染报表
-var chartOpts = {
-    container : chartRecord.id, 
-    widgetType : chartRecord.widgetType,
-    chartType : chartRecord.chartType,
-    chartData : chartRecord.chartData,
-    chartConfig : chartConfig
+    },
+    chartConfig : {'xAxes' : [1], 'yAxes' : [2], 'series' : [0]}
 };
 gscharts.renderChart(chartOpts,
     {
@@ -117,6 +107,7 @@ gscharts.renderChart(chartOpts,
                 (new Function('gscharts', editor.doc.getValue()))(gscharts);
             });
             
+            //4、设置gscharts渲染报表时的数据及配置,调用gscharts.renderChart(chartOpts)方法渲染报表
             (new Function('gscharts', editor.doc.getValue()))(gscharts);
 		});
 	
