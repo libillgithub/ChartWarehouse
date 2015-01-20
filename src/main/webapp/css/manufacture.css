@@ -165,7 +165,7 @@ body {
 .chart {
     height: 270px;
     /* width: 70%; */
-    width: 600px;
+    width: 750px;
 }
 @media (min-width: 1400px) {
   .chart {
