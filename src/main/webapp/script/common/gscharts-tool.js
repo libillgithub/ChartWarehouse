@@ -235,6 +235,105 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
      *   Render extended chart , as follow.
      ***************************************************************************
     */
+    function _exchangeChart(chartOpts, optionalParams) {
+        var tab_lis = _.map(_chartTypes, function (value, index, list) {
+            var activeCls = (value === 'line') ? 'active' : '';
+			return '<li class="' + activeCls + '"><a href="#tab_widgetType_' + value + '" data-toggle="tab">'+ value + '</a></li>';
+		});
+        var nav_panes = _.map(_chartTypes, function (value, index, list) {
+            var activeCls = (value === 'line') ? 'active' : '';
+			return [
+                '<div class="tab-pane fade ' + activeCls + ' in" id="tab_widgetType_'+ value + '">',
+                    '<div class="tab-pane-content row">',
+                        '<div class="tab-pane-content-item col-md-11 col-sm-7" chartType="widgetType-'+ value + '">',
+                            ' <a href="javascript:void(0);" class="thumbnail">',
+                                ' <img src="/script/common/img/chart-types/widgetType-'+ value + '.png">',
+                            ' </a>',
+                        '</div>',
+                    '</div>',
+                '</div>'
+            ].join('');
+		});
+        var content_tpl = [
+            ' <div class="tabbable tabs-left">                             ',
+            '     <ul class="nav nav-tabs">                                ',
+                    tab_lis.join(''),
+            '     </ul>                                                    ',
+            '     <div class="tab-content">                                ',
+                    nav_panes.join(''),
+            '     </div>                                                   ',
+            ' </div>                                                       '
+        ].join('');
+        var tpl = [
+			'<div class="modal fade customize-plot" id="gscharts-customize-chart" tabindex="-1" role="basic" aria-hidden="true"> ',
+			'	<div class="modal-dialog modal-lg">                                                                              ',
+			'		<div class="modal-content">                                                                                  ',
+			'			<div class="modal-header">                                                                               ',
+			'				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>                ',
+			'				<h4 class="modal-title">切换图表</h4>                                                                ',
+			'			</div>                                                                                                   ',
+			'			<div class="modal-body modal-body-chart">                                                                                 ',
+			'				<div class="row portlet-tabs ">                                                                                    ',
+            '                    <ul class="nav nav-tabs">                                 ',
+            '                        <li class="">                                   ',
+            '                            <a href="#tab_d3" data-toggle="tab">d3</a>     ',
+            '                        </li>                                                 ',
+            '                        <li class="">                                         ',
+            '                            <a href="#tab_echarts" data-toggle="tab">echarts</a>  ',
+            '                        </li>                                                 ',
+            '                        <li class="active">                                         ',
+            '                            <a href="#tab_highcharts" data-toggle="tab">highcharts</a>  ',
+            '                        </li>                                                 ',
+            '                    </ul>                                                     ',
+            '                    <div class="tab-content tab-total-content">                                 ',
+            '                        <div class="tab-pane fade active in" id="tab_highcharts">    ',
+                                        content_tpl.replace(/widgetType/g, 'highcharts'),
+            '                        </div>                                                ',
+            '                        <div class="tab-pane fade" id="tab_echarts">              ',
+                                        content_tpl.replace(/widgetType/g, 'echarts'),
+            '                        </div>                                                ',
+            '                        <div class="tab-pane fade" id="tab_d3">              ',
+                                        '',
+            '                        </div>                                                ',
+            '                    </div>                                                    ',
+			'				</div>                                                                                        ',
+			'			</div>                                                                                            ',
+			'			<div class="modal-footer" style="margin-top:0;">                                                  ',
+			'				<button id="modalSaveBtn" type="button" class="btn blue" data-dismiss="modal">保存</button>   ',
+			'				<button type="button" class="btn default" data-dismiss="modal">关闭</button>                  ',
+			'			</div>                                                                                            ',
+			'		</div>                                                                                                ',
+			'	</div>                                                                                                    ',
+			'</div>                                                                                                       '
+		].join('');
+        
+        var $customizeModal = $('#gscharts-customize-modal');
+        if ($customizeModal.length === 0) {
+            $(document.body).append('<div id="gscharts-customize-modal"></div>');
+            $customizeModal = $('#gscharts-customize-modal');
+        }
+        $customizeModal.empty().removeData();
+		$customizeModal.append(tpl);
+        
+        //Note: The modal method is asynchronous mode. It should use the event "shown.bs.modal" listener to monitor. 
+		//Because highcharts can't get the size of container before modal have been shown.			
+		$('#gscharts-customize-chart').modal('show').off('shown.bs.modal').on('shown.bs.modal', function (e) {
+            var $customizeChart = $('#gscharts-customize-chart');
+            $('.tab-total-content', $customizeChart).on('click', '.tab-pane-content-item', function (e) {
+                $customizeChart.attr('selectedChartType', $(this).attr('chartType'));
+            });
+            $('#modalSaveBtn', $customizeChart).on('click', function (e) {
+                var selectedChartType = $customizeChart.attr('selectedChartType');
+                if (selectedChartType) {
+                    selectedChartType = selectedChartType.split('-');
+                    chartOpts.widgetType = selectedChartType[0];
+                    chartOpts.chartType = selectedChartType[1];
+                    gscharts.renderChart(chartOpts, optionalParams);   
+                }
+            });
+		});
+    }
+    
     function _extendToWidget(chartId) {
         var chartTypes = _.map(_chartTypes, function (value, index, list) {
             return '<li><a href="javascript:void(0)" class="gswidget-btn chartType" chartType="' + value + '">' + value + '</a></li>';
@@ -242,6 +341,7 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
         var widgetTpl = [
             // '<div id="<widgetId>" class="gswidget">', 
                 '<div class="gswidget-tool">',
+                    '<button type="button" class="btn btn-default gswidget-btn gswidget-tool-btn exchange-btn"><i class="fa fa-exchange"></i></button>',
                     '<button type="button" class="btn btn-default gswidget-btn gswidget-tool-btn config-btn"><i class="fa fa-cog"></i></button>',
                     '<button type="button" class="btn btn-default gswidget-btn gswidget-tool-btn edit-btn"><i class="fa fa-edit"></i></button>',
                     '<button type="button" class="btn btn-default gswidget-btn gswidget-tool-btn close-btn"><i class="fa fa-close"></i></button>',
@@ -309,7 +409,9 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
                 // Temporary commented out for demonstration.(The commented out is for avoiding closure.)
                 // chartOpts = e.data.chartOpts, //ToDO: The chartOpts can be got from the chart container data.
                 // optionalParams = e.data.optionalParams, extendedOpts = e.data.extendedOpts;
-            if ($this.hasClass('config-btn')) {
+            if ($this.hasClass('exchange-btn')) {
+                _exchangeChart(chartOpts, optionalParams);
+            } else if ($this.hasClass('config-btn')) {
                 $('.gswidget-config', $gswidget).toggleClass('config-shown');
             } else if ($this.hasClass('edit-btn')) {
                 extendedOpts.editHandle && extendedOpts.editHandle.call(this, e, chartOpts, optionalParams);

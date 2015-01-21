@@ -5115,7 +5115,9 @@ define('zrender/zrender', [
             this.zr.un(zrConfig.EVENT.MOUSEMOVE, this._onmousemove);
             this.zr.un(zrConfig.EVENT.GLOBALOUT, this._onglobalout);
             if (this.hasAppend) {
-                this.dom.firstChild.removeChild(this._tDom);
+                try {
+                    this.dom.firstChild && this.dom.firstChild.removeChild(this._tDom);
+                } catch (ex) {} 
             }
             this._tDom = null;
         },
@@ -17126,7 +17128,9 @@ define('zrender/zrender', [
             this._textArea = null;
             this._buttonRefresh = null;
             this._buttonClose = null;
-            this.dom.firstChild.removeChild(this._tDom);
+            try {
+                this.dom.firstChild && this.dom.firstChild.removeChild(this._tDom);
+            } catch (ex) {} 
             this._tDom = null;
         }
     };

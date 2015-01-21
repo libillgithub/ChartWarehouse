@@ -674,7 +674,7 @@ define(['echarts', 'highcharts', 'highcharts-more', 'underscore'], function () {
             if (preOptions.withSeries) {
                 if (preOptions.withxAxis) { //WithSeries && With xAxis, 'result' include all the yAxis values that match the series value and xAxis value; (using aggregate defaultly)
                     optionSeries = _.map(seriesArray, function (value, index, listObj) {
-                        var i = 0, length = rows.length, temp = {}, result = [], yAxisValue = null, existCatagories = {},
+                        var i = 0, length = rows.length, temp = {}, result = [], yAxisValue = 0, existCatagories = {},
                             categoriesJson = $.extend({}, preOptions.catagoriesJSON);
                         for (; i < length; i++) {
                             temp = rows[i];
@@ -713,7 +713,7 @@ define(['echarts', 'highcharts', 'highcharts-more', 'underscore'], function () {
                     });
                 } else {  //WithSeries && Without xAxis, 'result' include all the yAxis values that match the series value;
                     optionSeries = _.map(seriesArray, function (value, index, listObj) {
-                        var i = 0, length = rows.length, temp = {}, result = [], yAxisValue = null;
+                        var i = 0, length = rows.length, temp = {}, result = [], yAxisValue = 0;
                         for (; i < length; i++) {
                             temp = rows[i];
                             if (temp[seriesCol] === value) {
@@ -748,7 +748,7 @@ define(['echarts', 'highcharts', 'highcharts-more', 'underscore'], function () {
                 }
             } else {
                 if (preOptions.withxAxis) { //WithoutSeries && With xAxis, 'result' include all the yAxis values that match xAxis value; (using aggregate defaultly)
-                    var i = 0, length = rows.length, temp = {}, result = [], yAxisValue = null, existCatagories = {},
+                    var i = 0, length = rows.length, temp = {}, result = [], yAxisValue = 0, existCatagories = {},
                         categoriesJson = $.extend({}, preOptions.catagoriesJSON);
                     for (; i < length; i++) {
                         temp = rows[i];
@@ -787,7 +787,7 @@ define(['echarts', 'highcharts', 'highcharts-more', 'underscore'], function () {
                         }
                     ];
                 } else {//WithoutSeries && Without xAxis, 'result' include all the yAxis values
-                    var i = 0, length = rows.length, temp = {}, result = [], yAxisValue = null;
+                    var i = 0, length = rows.length, temp = {}, result = [], yAxisValue = 0;
                     for (; i < length; i++) {
                         temp = rows[i];
                         if (yAxes.length === 1) {
