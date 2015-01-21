@@ -9,6 +9,7 @@ require.config({
         "highcharts-more": "plugins/highcharts-4.0.4/highcharts-more",
         "exporting": "plugins/highcharts-4.0.4/modules/exporting",
         'echarts': 'plugins/echarts-2.1.10/source/echarts-all',
+        'd3': 'plugins/d3/d3',
         //core js
 		"gscharts": "common/gscharts"
     },

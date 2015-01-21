@@ -245,9 +245,10 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
 			return [
                 '<div class="tab-pane fade ' + activeCls + ' in" id="tab_widgetType_'+ value + '">',
                     '<div class="tab-pane-content row">',
-                        '<div class="tab-pane-content-item col-md-11 col-sm-7" chartType="widgetType-'+ value + '">',
+                        '<div class="tab-pane-content-item col-md-4 col-sm-7" chartType="widgetType-'+ value + '">',
                             ' <a href="javascript:void(0);" class="thumbnail">',
                                 ' <img src="/script/common/img/chart-types/widgetType-'+ value + '.png">',
+                                // '<h3>标准柱状图</h3><em>基本的柱状图</em>',
                             ' </a>',
                         '</div>',
                     '</div>',
@@ -264,6 +265,38 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
             '     </div>                                                   ',
             ' </div>                                                       '
         ].join('');
+        
+        var _d3Types = ['chord', 'bubble'];
+        var d3_tab_lis = _.map(_d3Types, function (value, index, list) {
+            var activeCls = (value === 'chord') ? 'active' : '';
+			return '<li class="' + activeCls + '"><a href="#tab_widgetType_' + value + '" data-toggle="tab">'+ value + '</a></li>';
+		});
+        var d3_nav_panes = _.map(_d3Types, function (value, index, list) {
+            var activeCls = (value === 'chord') ? 'active' : '';
+			return [
+                '<div class="tab-pane fade ' + activeCls + ' in" id="tab_widgetType_'+ value + '">',
+                    '<div class="tab-pane-content row">',
+                        '<div class="tab-pane-content-item col-md-4 col-sm-7" chartType="widgetType-'+ value + '">',
+                            ' <a href="javascript:void(0);" class="thumbnail">',
+                                ' <img src="/script/common/img/chart-types/widgetType-'+ value + '.png">',
+                                // '<h3>标准柱状图</h3><em>基本的柱状图</em>',
+                            ' </a>',
+                        '</div>',
+                    '</div>',
+                '</div>'
+            ].join('');
+		});
+        var d3_content_tpl = [
+            ' <div class="tabbable tabs-left">                             ',
+            '     <ul class="nav nav-tabs">                                ',
+                    d3_tab_lis.join(''),
+            '     </ul>                                                    ',
+            '     <div class="tab-content">                                ',
+                    d3_nav_panes.join(''),
+            '     </div>                                                   ',
+            ' </div>                                                       '
+        ].join('');
+        
         var tpl = [
 			'<div class="modal fade customize-plot" id="gscharts-customize-chart" tabindex="-1" role="basic" aria-hidden="true"> ',
 			'	<div class="modal-dialog modal-lg">                                                                              ',
@@ -293,7 +326,7 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
                                         content_tpl.replace(/widgetType/g, 'echarts'),
             '                        </div>                                                ',
             '                        <div class="tab-pane fade" id="tab_d3">              ',
-                                        '',
+                                        d3_content_tpl.replace(/widgetType/g, 'd3'),
             '                        </div>                                                ',
             '                    </div>                                                    ',
 			'				</div>                                                                                        ',

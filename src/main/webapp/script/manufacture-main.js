@@ -10,6 +10,7 @@ require.config({
         'highcharts-more': 'plugins/highcharts-4.0.4/highcharts-more',
         'exporting': 'plugins/highcharts-4.0.4/modules/exporting',
         'echarts': 'plugins/echarts-2.1.10/source/echarts-all',
+        'd3': 'plugins/d3/d3',
         'handsontable': 'plugins/handsontable/dist/handsontable.full.min',
         'datatables': 'plugins/data-tables/jquery.dataTables.min',
         'dataTables-tableTools': 'plugins/data-tables/dataTables.tableTools.min',
