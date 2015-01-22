@@ -1,6 +1,19 @@
 define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools', 'DT_bootstrap'], function (gscharts, gsdata) {
 	var _chartTypes = ['line', 'spline', 'bar', 'column', 'area', 'areaspline', 'pie', 'columnrange', 'arearange', 'scatter', 'bubble'];
-	var _datatablesCfg = {
+	var _chartDetails = {
+        'line' : {'title' : '标准折线图', 'description' : '普通折线图'}, 
+        'spline' : {'title' : '标准曲线图', 'description' : '普通曲线图'},
+        'bar' : {'title' : '标准条形图', 'description' : '柱状图的横纵坐标互换'}, 
+        'column' : {'title' : '标准柱状图', 'description' : '基本柱状图'},
+        'area' : {'title' : '标准面积图', 'description' : '填充样式，普通折线'}, 
+        'areaspline' : {'title' : '标准面积图', 'description' : '填充样式，平滑曲线'},
+        'columnrange' : {'title' : '柱状范围图', 'description' : '普通柱状范围图'}, 
+        'arearange' : {'title' : '面积范围图', 'description' : '普通面积范围图'},
+        'scatter' : {'title' : '标准散点图', 'description' : '普通散点图'}, 
+        'bubble' : {'title' : '标准冒泡图', 'description' : '普通冒泡图'},
+        'pie' : {'title' : '标准饼图', 'description' : '基本饼图'}
+    };
+    var _datatablesCfg = {
         'searching' : false,
         'aLengthMenu': [10, 20, 50],
         'iDisplayLength': 10,
@@ -235,27 +248,39 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
      *   Render extended chart , as follow.
      ***************************************************************************
     */
-    function _exchangeChart(chartOpts, optionalParams) {
-        var tab_lis = _.map(_chartTypes, function (value, index, list) {
-            var activeCls = (value === 'line') ? 'active' : '';
+    function _generateTabTpl(widgetType) {
+        var chartTypes = _chartTypes, chartDetails = _chartDetails,
+            tab_lis = [], nav_panes = [], content_tpl = '';
+        
+        if (widgetType === 'd3') {
+            chartTypes = ['chord', 'bubble'];
+            chartDetails = {
+                'chord' : {'title' : '标准和弦图', 'description' : '基本和弦图'},
+                'bubble' : {'title' : '标准冒泡图', 'description' : '基本冒泡图'}
+            };    
+        }
+        
+        tab_lis = _.map(chartTypes, function (value, index, list) {
+            var activeCls = (index === 0) ? 'active' : '';
 			return '<li class="' + activeCls + '"><a href="#tab_widgetType_' + value + '" data-toggle="tab">'+ value + '</a></li>';
 		});
-        var nav_panes = _.map(_chartTypes, function (value, index, list) {
-            var activeCls = (value === 'line') ? 'active' : '';
+        nav_panes = _.map(chartTypes, function (value, index, list) {
+            var activeCls = (index === 0) ? 'active' : '',
+                chartDetail = chartDetails[value] || {'title' : '', 'description' : ''};
 			return [
                 '<div class="tab-pane fade ' + activeCls + ' in" id="tab_widgetType_'+ value + '">',
                     '<div class="tab-pane-content row">',
                         '<div class="tab-pane-content-item col-md-4 col-sm-7" chartType="widgetType-'+ value + '">',
                             ' <a href="javascript:void(0);" class="thumbnail">',
                                 ' <img src="/script/common/img/chart-types/widgetType-'+ value + '.png">',
-                                // '<h3>标准柱状图</h3><em>基本的柱状图</em>',
+                                ' <h3>' + chartDetail.title + '</h3><em>' + chartDetail.description + '</em>',
                             ' </a>',
                         '</div>',
                     '</div>',
                 '</div>'
             ].join('');
 		});
-        var content_tpl = [
+        content_tpl = [
             ' <div class="tabbable tabs-left">                             ',
             '     <ul class="nav nav-tabs">                                ',
                     tab_lis.join(''),
@@ -265,38 +290,11 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
             '     </div>                                                   ',
             ' </div>                                                       '
         ].join('');
-        
-        var _d3Types = ['chord', 'bubble'];
-        var d3_tab_lis = _.map(_d3Types, function (value, index, list) {
-            var activeCls = (value === 'chord') ? 'active' : '';
-			return '<li class="' + activeCls + '"><a href="#tab_widgetType_' + value + '" data-toggle="tab">'+ value + '</a></li>';
-		});
-        var d3_nav_panes = _.map(_d3Types, function (value, index, list) {
-            var activeCls = (value === 'chord') ? 'active' : '';
-			return [
-                '<div class="tab-pane fade ' + activeCls + ' in" id="tab_widgetType_'+ value + '">',
-                    '<div class="tab-pane-content row">',
-                        '<div class="tab-pane-content-item col-md-4 col-sm-7" chartType="widgetType-'+ value + '">',
-                            ' <a href="javascript:void(0);" class="thumbnail">',
-                                ' <img src="/script/common/img/chart-types/widgetType-'+ value + '.png">',
-                                // '<h3>标准柱状图</h3><em>基本的柱状图</em>',
-                            ' </a>',
-                        '</div>',
-                    '</div>',
-                '</div>'
-            ].join('');
-		});
-        var d3_content_tpl = [
-            ' <div class="tabbable tabs-left">                             ',
-            '     <ul class="nav nav-tabs">                                ',
-                    d3_tab_lis.join(''),
-            '     </ul>                                                    ',
-            '     <div class="tab-content">                                ',
-                    d3_nav_panes.join(''),
-            '     </div>                                                   ',
-            ' </div>                                                       '
-        ].join('');
-        
+     
+        return content_tpl.replace(/widgetType/g, widgetType);
+    }
+    
+    function _exchangeChart(chartOpts, optionalParams) {
         var tpl = [
 			'<div class="modal fade customize-plot" id="gscharts-customize-chart" tabindex="-1" role="basic" aria-hidden="true"> ',
 			'	<div class="modal-dialog modal-lg">                                                                              ',
@@ -320,13 +318,13 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
             '                    </ul>                                                     ',
             '                    <div class="tab-content tab-total-content">                                 ',
             '                        <div class="tab-pane fade active in" id="tab_highcharts">    ',
-                                        content_tpl.replace(/widgetType/g, 'highcharts'),
+                                        _generateTabTpl('highcharts'),
             '                        </div>                                                ',
             '                        <div class="tab-pane fade" id="tab_echarts">              ',
-                                        content_tpl.replace(/widgetType/g, 'echarts'),
+                                        _generateTabTpl('echarts'),
             '                        </div>                                                ',
             '                        <div class="tab-pane fade" id="tab_d3">              ',
-                                        d3_content_tpl.replace(/widgetType/g, 'd3'),
+                                        _generateTabTpl('d3'),
             '                        </div>                                                ',
             '                    </div>                                                    ',
 			'				</div>                                                                                        ',

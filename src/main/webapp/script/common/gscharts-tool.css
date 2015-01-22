@@ -338,6 +338,14 @@
   padding-left: 127px;
 }
 
+.tabs-left > .tab-content .tab-pane-content .tab-pane-content-item a {
+    text-decoration:none;
+}
+
+.tabs-left > .tab-content .tab-pane-content .tab-pane-content-item a:hover {
+    text-decoration:none;
+}
+
 .tabs-left > .tab-content .tab-pane-content .tab-pane-content-item a > img{
   height: 230px;
   display: block;
@@ -349,6 +357,11 @@
       width: 100%;
       display: block;
     }
+}
+
+.tabs-left > .tab-content .tab-pane-content .tab-pane-content-item a > h3 {
+    margin: 8px 0;
+    color: #ffea00;
 }
 
 .tabs-left > .nav-tabs > li > a {
