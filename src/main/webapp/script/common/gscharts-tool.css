@@ -286,14 +286,19 @@
 
 .customize-plot .modal-body .customize-plot-draggableZone .alert-warning {
 	display: inline-block;
-	font-size: 12px;
-	margin-bottom: 0;
-	padding: 0;
-	/* width: 69.5%; */
+    font-size: 14px;
+    margin-bottom: 0;
+    padding: 1px 1px 0 1px;
+    /* width: 69.5%; */
 }
 
 .customize-plot .modal-body .customize-plot-draggableZone .alert-warning .close {
-	margin-left: 5px;
+    margin-left: 5px;
+    right: 0px;
+    top: 0px;
+    position: relative;
+    font-size: 14px;
+    font-family: sans-serif;
 }
 
 /*dialog css*/

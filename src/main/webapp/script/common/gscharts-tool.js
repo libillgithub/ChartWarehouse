@@ -36,6 +36,12 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
         }
     };
     
+    /*
+     ***********************************************************************************************************************
+     *   Cutomize plot , as follow.
+     ***********************************************************************************************************************
+    */
+    
 	//To handle the situation about that the chartConfig is null; 
 	function _preprocess(chartOpts) {
 		if (!chartOpts.chartConfig || _.isEmpty(chartOpts.chartConfig)) {
@@ -99,9 +105,9 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
 			'								<h4>选择列：</h4><div class="customize-plot-item customize-plot-fields">' + columnTpls.join('') + '</div>   ',
 			'							</div>                                                                                                          ',
 			'							<div class="col-md-6 col-sm-12 customize-plot-draggableZone">                                                                                ',
-			'								<h4>xAxes：</h4><div maxLimit="1" class="customize-plot-item customize-plot-xAxes">' + xAxesTpls.join('') + '</div>',
-			'								<h4>yAxes：</h4><div maxLimit="3" class="customize-plot-item customize-plot-yAxes">' + yAxesTpls.join('') + '</div>',                                            
-			'								<h4>series：</h4><div maxLimit="1" class="customize-plot-item customize-plot-series">' + seriesTpls.join('') + '</div>',                                              
+			'								<h4>x轴：</h4><div maxLimit="1" class="customize-plot-item customize-plot-xAxes">' + xAxesTpls.join('') + '</div>',
+			'								<h4>y轴：</h4><div maxLimit="3" class="customize-plot-item customize-plot-yAxes">' + yAxesTpls.join('') + '</div>',                                            
+			'								<h4>系列：</h4><div maxLimit="1" class="customize-plot-item customize-plot-series">' + seriesTpls.join('') + '</div>',                                              
 			'							</div>                                                                                                          ',
 			'						</div>                                                                                                              ',
 			'					</div>                                                                                                                  ',
@@ -244,9 +250,9 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
 	}
     
     /*
-     ***************************************************************************
+     ***********************************************************************************************************************
      *   Render extended chart , as follow.
-     ***************************************************************************
+     ***********************************************************************************************************************
     */
     function _generateTabTpl(widgetType) {
         var chartTypes = _chartTypes, chartDetails = _chartDetails,
@@ -294,14 +300,16 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
         return content_tpl.replace(/widgetType/g, widgetType);
     }
     
-    function _exchangeChart(chartOpts, optionalParams) {
+    function _chooseChart(chartOpts, optionalParams, extendedOpts) {
+        extendedOpts = extendedOpts || {};
+        var title = extendedOpts.title || '切换图表';
         var tpl = [
 			'<div class="modal fade customize-plot" id="gscharts-customize-chart" tabindex="-1" role="basic" aria-hidden="true"> ',
 			'	<div class="modal-dialog modal-lg">                                                                              ',
 			'		<div class="modal-content">                                                                                  ',
 			'			<div class="modal-header">                                                                               ',
 			'				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>                ',
-			'				<h4 class="modal-title">切换图表</h4>                                                                ',
+			'				<h4 class="modal-title">' + title + '</h4>                                                           ',
 			'			</div>                                                                                                   ',
 			'			<div class="modal-body modal-body-chart">                                                                                 ',
 			'				<div class="row portlet-tabs ">                                                                                    ',
@@ -359,7 +367,7 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
                     selectedChartType = selectedChartType.split('-');
                     chartOpts.widgetType = selectedChartType[0];
                     chartOpts.chartType = selectedChartType[1];
-                    gscharts.renderChart(chartOpts, optionalParams);   
+                    extendedOpts.callback && extendedOpts.callback(chartOpts, optionalParams);
                 }
             });
 		});
@@ -441,7 +449,12 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
                 // chartOpts = e.data.chartOpts, //ToDO: The chartOpts can be got from the chart container data.
                 // optionalParams = e.data.optionalParams, extendedOpts = e.data.extendedOpts;
             if ($this.hasClass('exchange-btn')) {
-                _exchangeChart(chartOpts, optionalParams);
+                _chooseChart(chartOpts, optionalParams, {
+                    'title' : '切换报表',
+                    'callback' : function (chartOpts, optionalParams) {
+                        gscharts.renderChart(chartOpts, optionalParams);
+                    }
+                });
             } else if ($this.hasClass('config-btn')) {
                 $('.gswidget-config', $gswidget).toggleClass('config-shown');
             } else if ($this.hasClass('edit-btn')) {
@@ -492,6 +505,7 @@ define(['gscharts', 'gsdata', 'underscore', 'datatables', 'dataTables-tableTools
 	
 	return {
 		customizePlot : _customizePlot,
+        chooseChart : _chooseChart, 
         renderExtendedChart : _renderExtendedChart
 	};
 });

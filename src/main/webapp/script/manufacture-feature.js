@@ -114,7 +114,31 @@ define(['gscharts', 'gscharts-tool', 'gsdata', 'handsontable'], function (gschar
         $('#navbar').on('click', '.chart-handle', function (e) {
             var $this = $(this);
             if ($this.hasClass('chart-handle-add')) {
-                console.log('add chart.');
+                var chartId = 'new_chart_' + new Date().getTime();
+                var chartOpts = {
+                    container : chartId, 
+                    widgetType : 'highcharts',
+                    chartType : 'line',
+                    chartData : gsdata.chartData,
+                    chartConfig : {'xAxes' : [1], 'yAxes' : [2], 'series' : [0]}
+                },
+                optionalParams = {title : {'text' : 'new demo'}};
+                gschartsTool.chooseChart(chartOpts, optionalParams, {
+                    'title' : '添加报表',
+                    'callback' : function (chartOpts, optionalParams) {
+                        $('#chartContainer').append('<div id="' + chartId +'" class="chart"></div>');
+                        var extendedOpts = {
+                            editHandle : function (event, chartOpts, optionalParams) {
+                                console.log('invoke editHandle.');
+                                renderHTDataEditor(event, chartOpts, optionalParams);
+                            },
+                            closeHandle : function (event, chartOpts, optionalParams) {
+                                console.log('invoke closeHandle.');
+                            }
+                        };
+                        gschartsTool.renderExtendedChart(chartOpts, optionalParams, extendedOpts);
+                    }
+                });
             } else if ($this.hasClass('chart-handle-save')) {
                 console.log('save chart.');
             }
